@@ -1,0 +1,81 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "forkit-core"
+version = "0.1.0"
+description = "Identity and provenance infrastructure for AI models and agents"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+authors = [
+  { name = "ForkIt", email = "sa.hamza@forkit.dev" },
+]
+keywords = ["ai", "governance", "provenance", "lineage", "model-passport", "agent-passport"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = []   # zero hard deps — pure Python 3.10+
+
+[project.optional-dependencies]
+pydantic = [
+  "pydantic>=2.0",
+]
+cli = [
+  "typer[all]>=0.9",
+  "pyyaml>=6.0",
+]
+all = [
+  "pydantic>=2.0",
+  "typer[all]>=0.9",
+  "pyyaml>=6.0",
+]
+dev = [
+  "pytest>=7.0",
+  "pytest-cov",
+  "ruff",
+  "mypy",
+  "hatch",
+  "pydantic>=2.0",
+]
+
+[project.scripts]
+forkit = "forkit.cli.main:main"
+
+[project.urls]
+Homepage   = "https://github.com/arpitasarker01/Forkit_Dev"
+Repository = "https://github.com/arpitasarker01/Forkit_Dev"
+Issues     = "https://github.com/arpitasarker01/Forkit_Dev/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["forkit", "forkit_core"]  # ship both during transition
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = false
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["forkit"]
+omit = ["tests/*"]
