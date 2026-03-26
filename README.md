@@ -42,9 +42,38 @@ For development:
 
 ```bash
 git clone https://github.com/arpitasarker01/Forkit_Dev.git
-cd forkit-core
+cd Forkit_Dev
 pip install -e ".[dev]"
 ```
+
+### Frontend prototype
+
+A React + TypeScript + Vite frontend lives under [`web/`](./web) and currently uses mock passport data to demonstrate the Forkit Core registry experience without changing the Python package folders.
+
+Frontend setup:
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Additional frontend commands:
+
+```bash
+npm run build
+npm run preview
+```
+
+The frontend includes these screens:
+
+- Landing
+- Dashboard
+- Passport List
+- Passport Detail
+- Create Passport
+- Verify Passport
+- Lineage
 
 ---
 
