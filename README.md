@@ -291,6 +291,33 @@ This is the service shell for future registry and sync endpoints.
 
 ---
 
+## LangGraph Skeleton
+
+The repo now includes a minimal LangGraph-facing adapter in
+`forkit_langgraph`. It does not depend on LangGraph runtime objects yet; it
+accepts a serializable `graph_spec`, derives a stable graph hash, and uses that
+as the agent passport artifact hash unless you override it.
+
+```python
+from forkit.sdk import ForkitClient
+from forkit_langgraph import LangGraphAdapter
+
+client = ForkitClient()
+adapter = LangGraphAdapter(client=client)
+
+agent_id = adapter.register_agent(
+    name="triage-graph",
+    version="1.0.0",
+    model_id="<model-passport-id>",
+    creator={"name": "Hamza", "organization": "ForkIt"},
+    graph_spec={"entrypoint": "router", "nodes": ["router", "support"]},
+)
+```
+
+This is the smallest integration layer for future real LangGraph hooks.
+
+---
+
 ## Passport structure
 
 ### ModelPassport
