@@ -13,6 +13,9 @@ Zero hard dependencies. Works offline. Deterministic IDs.
 
 Forkit Core stays local and file-based, with developer-friendly compatibility tools for GitHub CI passport validation and Hugging Face model card export.
 
+For OSS scope and contribution boundaries, see
+[`docs/oss-architecture.md`](./docs/oss-architecture.md).
+
 ---
 
 ## What's inside
