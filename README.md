@@ -511,6 +511,15 @@ metadata in the passport.
 Use [`examples/langchain_quickstart.py`](./examples/langchain_quickstart.py) for
 an end-to-end runnable example.
 
+Runnable LangChain sync demo:
+
+```bash
+python examples/langchain_sync_quickstart.py
+```
+
+That example creates a tool-calling LangChain agent, registers its passport,
+and pulls the resulting model + agent passports into a second local registry.
+
 ---
 
 ## Passport structure

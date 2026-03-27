@@ -51,3 +51,25 @@ class TestExamples:
         assert payload["mirrored_agent_present"] is True
         assert payload["mirrored_graph_name"] == "ticket-router-runtime"
         assert "route_ticket" in payload["mirrored_nodes"]
+
+    def test_langchain_sync_quickstart_runs(self, capsys):
+        pytest.importorskip("langchain.agents")
+        pytest.importorskip("langchain_core.tools")
+
+        runpy.run_path(
+            str(REPO_ROOT / "examples" / "langchain_sync_quickstart.py"),
+            run_name="__main__",
+        )
+
+        output = capsys.readouterr().out
+        payload = json.loads(output)
+
+        assert payload["invoke_message"] == "service status: green"
+        assert payload["pull_status"] == "synced"
+        assert payload["pull_items"] == 2
+        assert payload["mirror_total"] == 2
+        assert payload["mirror_outbox_items"] == 0
+        assert payload["mirrored_agent_present"] is True
+        assert payload["mirrored_tool_names"] == ["lookup_status"]
+        assert payload["runtime_counts"]["tool_start"] >= 1
+        assert payload["runtime_counts"]["tool_end"] >= 1
