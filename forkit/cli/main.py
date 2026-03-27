@@ -7,6 +7,7 @@ Commands
 ────────
   forkit register model <yaml-file>
   forkit register agent <yaml-file>
+  forkit serve
   forkit inspect <id>
   forkit list [--type model|agent] [--status active|draft|deprecated|revoked]
   forkit search <query>
@@ -145,6 +146,53 @@ def stats():
     """Print registry statistics."""
     s = _registry().stats()
     typer.echo(json.dumps(s, indent=2))
+
+
+# ── serve ─────────────────────────────────────────────────────────────────────
+
+@app.command()
+def serve(
+    host: str = typer.Option("127.0.0.1", "--host", help="Bind host"),
+    port: int = typer.Option(8000, "--port", help="Bind port"),
+    registry_root: Path = typer.Option(_REGISTRY_ROOT, "--registry-root", help="Registry root path"),
+):
+    """Run the local HTTP service over the registry."""
+    try:
+        import uvicorn
+    except ImportError:
+        typer.echo(
+            "Server support requires FastAPI and Uvicorn.\n"
+            "Install with:\n"
+            "  pip install 'forkit-core[server]'",
+            err=True,
+        )
+        raise typer.Exit(1)
+
+    try:
+        from ..server import ServerSettings, create_app
+    except ImportError:
+        typer.echo(
+            "Server support is not available in this environment.\n"
+            "Install with:\n"
+            "  pip install 'forkit-core[server]'",
+            err=True,
+        )
+        raise typer.Exit(1)
+
+    settings = ServerSettings(
+        registry_root=registry_root.expanduser().resolve(),
+        host=host,
+        port=port,
+    )
+    typer.echo(
+        f"Serving forkit local service on http://{settings.host}:{settings.port}\n"
+        f"Registry root: {settings.registry_root}"
+    )
+    uvicorn.run(
+        create_app(settings=settings),
+        host=settings.host,
+        port=settings.port,
+    )
 
 
 # ── entrypoint ────────────────────────────────────────────────────────────────

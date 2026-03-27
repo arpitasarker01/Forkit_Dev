@@ -22,6 +22,7 @@ Design decisions
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 import json
 from pathlib import Path
 from typing import Any
@@ -47,7 +48,9 @@ class LocalRegistry:
         self.agents_dir   = self.root / "agents"
         self.db_path      = self.root / "index.db"
         self.lineage_path = self.root / "lineage.json"
+        self.outbox_path  = self.root / "outbox.jsonl"
         self._lineage: LineageGraph | None = None
+        self._outbox_cursor: int | None = None
 
     # ── Lifecycle ──────────────────────────────────────────────────────────────
 
@@ -55,6 +58,7 @@ class LocalRegistry:
         """Create directory tree and initialise the DB. Idempotent."""
         self.models_dir.mkdir(parents=True, exist_ok=True)
         self.agents_dir.mkdir(parents=True, exist_ok=True)
+        self.outbox_path.touch(exist_ok=True)
         with RegistryDB(self.db_path):
             pass  # DDL runs on connect
 
@@ -68,11 +72,19 @@ class LocalRegistry:
         self.init()
         data = passport.to_dict()
         path = self.models_dir / f"{passport.id}.json"
+        relative_path = str(path.relative_to(self.root))
         path.write_text(json.dumps(data, indent=2, default=str))
         with self._db() as db:
-            db.upsert(data, str(path.relative_to(self.root)))
+            db.upsert(data, relative_path)
         self.lineage.register_model(data)
         self.lineage.save(self.lineage_path)
+        self._append_change(
+            operation="upsert",
+            passport_id=passport.id,
+            passport_type=data.get("passport_type", "model"),
+            json_path=relative_path,
+            document=data,
+        )
         return passport.id
 
     def get_model(self, passport_id: str) -> ModelPassport | None:
@@ -88,11 +100,19 @@ class LocalRegistry:
         self.init()
         data = passport.to_dict()
         path = self.agents_dir / f"{passport.id}.json"
+        relative_path = str(path.relative_to(self.root))
         path.write_text(json.dumps(data, indent=2, default=str))
         with self._db() as db:
-            db.upsert(data, str(path.relative_to(self.root)))
+            db.upsert(data, relative_path)
         self.lineage.register_agent(data)
         self.lineage.save(self.lineage_path)
+        self._append_change(
+            operation="upsert",
+            passport_id=passport.id,
+            passport_type=data.get("passport_type", "agent"),
+            json_path=relative_path,
+            document=data,
+        )
         return passport.id
 
     def get_agent(self, passport_id: str) -> AgentPassport | None:
@@ -108,7 +128,8 @@ class LocalRegistry:
 
     def delete(self, passport_id: str) -> bool:
         deleted = False
-        for directory in (self.models_dir, self.agents_dir):
+        deleted_type: str | None = None
+        for deleted_type, directory in (("model", self.models_dir), ("agent", self.agents_dir)):
             path = directory / f"{passport_id}.json"
             if path.exists():
                 path.unlink()
@@ -117,6 +138,12 @@ class LocalRegistry:
         if deleted:
             with self._db() as db:
                 db.delete(passport_id)
+            if deleted_type is not None:
+                self._append_change(
+                    operation="delete",
+                    passport_id=passport_id,
+                    passport_type=deleted_type,
+                )
         return deleted
 
     # ── Queries ────────────────────────────────────────────────────────────────
@@ -132,6 +159,49 @@ class LocalRegistry:
     def search(self, query: str) -> list[dict[str, Any]]:
         with self._db() as db:
             return db.search(query)
+
+    def export_changes(
+        self,
+        *,
+        after: int = 0,
+        limit: int = 100,
+        passport_type: str | None = None,
+    ) -> dict[str, Any]:
+        """Return cursor-ordered change records with current passport documents."""
+        if after < 0:
+            raise ValueError("'after' must be greater than or equal to 0.")
+        if limit < 1:
+            raise ValueError("'limit' must be greater than or equal to 1.")
+
+        filtered: list[dict[str, Any]] = []
+        for record in self._read_outbox():
+            cursor = record.get("cursor")
+            if not isinstance(cursor, int) or cursor <= after:
+                continue
+            if passport_type is not None and record.get("passport_type") != passport_type:
+                continue
+            filtered.append(record)
+
+        items: list[dict[str, Any]] = []
+        for record in filtered[:limit]:
+            item = dict(record)
+            if item.get("operation") == "delete":
+                item["document"] = None
+            else:
+                snapshot = item.get("document")
+                if isinstance(snapshot, dict):
+                    item["document"] = snapshot
+                else:
+                    passport = self.get(item["passport_id"])
+                    item["document"] = passport.to_dict() if passport is not None else None
+            items.append(item)
+
+        cursor = items[-1]["cursor"] if items else after
+        return {
+            "cursor": cursor,
+            "has_more": len(filtered) > limit,
+            "items": items,
+        }
 
     def stats(self) -> dict[str, Any]:
         with self._db() as db:
@@ -181,3 +251,59 @@ class LocalRegistry:
         if passport is None:
             return {"valid": False, "reason": "not_found", "stored_id": passport_id}
         return verify_passport_id(passport.to_dict())
+
+    def _append_change(
+        self,
+        *,
+        operation: str,
+        passport_id: str,
+        passport_type: str,
+        json_path: str | None = None,
+        document: dict[str, Any] | None = None,
+    ) -> int:
+        record: dict[str, Any] = {
+            "cursor": self._load_outbox_cursor() + 1,
+            "operation": operation,
+            "passport_id": passport_id,
+            "passport_type": passport_type,
+            "changed_at": datetime.now(timezone.utc).isoformat(),
+        }
+        if json_path is not None:
+            record["json_path"] = json_path
+        if document is not None:
+            record["document"] = document
+
+        with self.outbox_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record, sort_keys=True))
+            handle.write("\n")
+
+        self._outbox_cursor = record["cursor"]
+        return record["cursor"]
+
+    def _load_outbox_cursor(self) -> int:
+        if self._outbox_cursor is not None:
+            return self._outbox_cursor
+
+        cursor = 0
+        for record in self._read_outbox():
+            value = record.get("cursor")
+            if isinstance(value, int) and value > cursor:
+                cursor = value
+        self._outbox_cursor = cursor
+        return cursor
+
+    def _read_outbox(self) -> list[dict[str, Any]]:
+        self.init()
+        records: list[dict[str, Any]] = []
+        with self.outbox_path.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                raw = line.strip()
+                if not raw:
+                    continue
+                try:
+                    record = json.loads(raw)
+                except json.JSONDecodeError:
+                    continue
+                if isinstance(record, dict):
+                    records.append(record)
+        return records

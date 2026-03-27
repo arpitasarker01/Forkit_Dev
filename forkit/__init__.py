@@ -71,6 +71,13 @@ except Exception:
     LocalRegistry = None   # type: ignore[assignment,misc]
     ForkitClient  = None   # type: ignore[assignment,misc]
 
+# ── Local service (optional FastAPI dependency) ───────────────────────────────
+try:
+    from .server import ServerSettings, create_app
+except Exception:
+    ServerSettings = None  # type: ignore[assignment,misc]
+    create_app = None      # type: ignore[assignment,misc]
+
 __all__ = [
     "__version__",
     # Domain
@@ -87,4 +94,6 @@ __all__ = [
     "_PYDANTIC_AVAILABLE",
     # Registry / SDK
     "LocalRegistry", "ForkitClient",
+    # Local service
+    "ServerSettings", "create_app",
 ]

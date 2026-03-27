@@ -33,11 +33,15 @@ Forkit Core stays local and file-based, with developer-friendly compatibility to
 pip install forkit-core
 ```
 
+Python imports should use `forkit.*`. The legacy `forkit_core.*` namespace is
+kept as a compatibility shim in v0.1.x.
+
 With optional extras:
 
 ```bash
 pip install "forkit-core[pydantic]"   # Pydantic v2 backend + JSON Schema
 pip install "forkit-core[cli]"        # Typer CLI
+pip install "forkit-core[server]"     # local FastAPI service
 pip install "forkit-core[all]"        # everything
 ```
 
@@ -262,6 +266,31 @@ forkit stats
 
 ---
 
+## Local Service
+
+Install the server extra and run the local HTTP service on top of the same
+filesystem-backed registry:
+
+```bash
+forkit serve --host 127.0.0.1 --port 8000
+```
+
+Bootstrap routes:
+
+- `GET /`       — service info and registry paths
+- `GET /healthz` — liveness check
+- `GET /readyz`  — readiness check
+- `POST /models` — register a model passport
+- `POST /agents` — register an agent passport
+- `GET /passports/{id}` — fetch a stored passport
+- `POST /verify/{id}` — verify stored content against the passport ID
+- `GET /lineage/{id}` — fetch ancestor/descendant lineage
+- `GET /export` — export cursor-based change records for sync
+
+This is the service shell for future registry and sync endpoints.
+
+---
+
 ## Passport structure
 
 ### ModelPassport
@@ -289,12 +318,28 @@ forkit stats
 
 ---
 
+## Identity Boundary
+
+`passport_id` is the stable join key for a passport across tools and systems.
+
+- Identity fields are limited to `passport_type`, `name`, `version`,
+  `creator`, and optional `artifact_hash`.
+- Extra application metadata such as sync state, labels, review notes, or
+  runtime configuration must not affect the passport ID.
+- If you need those fields, attach them alongside the passport, keyed by
+  `passport_id`, either in your own database or in a separate sync layer.
+- Do not overload `creator.organization` with later ownership or routing data.
+  It records the originating creator and does participate in identity derivation.
+
+---
+
 ## Registry layout
 
 ```
 ~/.forkit/registry/
   index.db          ← SQLite index (always rebuildable)
   lineage.json      ← Lineage graph snapshot
+  outbox.jsonl      ← Append-only local change log for export/sync
   models/
     <sha256>.json   ← One file per ModelPassport
   agents/
