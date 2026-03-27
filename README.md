@@ -427,6 +427,15 @@ result = bound.invoke({"question": "hello"})
 
 This is the minimal runtime integration layer for future direct LangGraph hooks.
 
+Runnable LangGraph sync demo:
+
+```bash
+python examples/langgraph_sync_quickstart.py
+```
+
+That example compiles a real LangGraph `StateGraph`, registers its passport,
+and pulls the resulting model + graph passports into a second local registry.
+
 ---
 
 ## LangChain Adapter
