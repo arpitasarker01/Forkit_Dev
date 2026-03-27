@@ -213,7 +213,7 @@ model_id = client.models.register(
     name="my-fine-tuned-llm",
     version="1.0.0",
     architecture="transformer",
-    creator={"name": "Hamza", "organization": "ForkIt"},
+    creator={"name": "Tony Stark", "organization": "Stark Industries"},
     license="Apache-2.0",
 )
 
@@ -222,7 +222,7 @@ agent_id = client.agents.register(
     name="support-agent",
     version="1.0.0",
     model_id=model_id,
-    creator={"name": "Hamza", "organization": "ForkIt"},
+    creator={"name": "J.A.R.V.I.S", "organization": "Stark Industries"},
     system_prompt="You are a helpful support assistant.",
 )
 
