@@ -49,6 +49,59 @@ cd Forkit_Dev
 pip install -e ".[dev]"
 ```
 
+## Get started in 5 minutes
+
+If you want the smallest adoption path, start with the copyable GitHub CI demo payload in [`publish/github-ci-demo/`](./publish/github-ci-demo/).
+
+1. Copy [`publish/github-ci-demo/forkit-passport.json`](./publish/github-ci-demo/forkit-passport.json) into your own repository root.
+2. Copy [`publish/github-ci-demo/.github/workflows/validate-forkit-passport.yml`](./publish/github-ci-demo/.github/workflows/validate-forkit-passport.yml) into `.github/workflows/`.
+3. Push or open a pull request. GitHub Actions will fail on missing files, invalid JSON, schema errors, or deterministic `id` mismatches.
+4. Run the same check locally with `python scripts/validate_passport.py --path forkit-passport.json`.
+
+### Copy-paste snippets
+
+GitHub workflow:
+
+```yaml
+name: Validate Forkit passport
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "forkit-passport.json"
+      - ".github/workflows/validate-forkit-passport.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "forkit-passport.json"
+      - ".github/workflows/validate-forkit-passport.yml"
+
+jobs:
+  validate-passport:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: arpitasarker01/Forkit_Dev/.github/actions/validate-passport@v0.1.0
+        with:
+          passport-path: forkit-passport.json
+```
+
+Local validation:
+
+```bash
+python scripts/validate_passport.py --path forkit-passport.json
+```
+
+Hugging Face exporter:
+
+```bash
+python scripts/export_hf_model_card.py \
+  --path forkit-passport.json \
+  --output huggingface-model-card.md
+```
+
 ### Frontend prototype
 
 A React + TypeScript + Vite frontend lives under [`web/`](./web) and is intentionally limited to the open source Forkit Core scope defined in this README.
@@ -100,6 +153,7 @@ Included files:
 
 - [`.github/actions/validate-passport/action.yml`](./.github/actions/validate-passport/action.yml) for reusable CI validation
 - [`.github/workflows/validate-passport.yml`](./.github/workflows/validate-passport.yml) as a sample workflow
+- [`publish/github-ci-demo/README.md`](./publish/github-ci-demo/README.md) as the smallest copyable demo payload
 - [`scripts/validate_passport.py`](./scripts/validate_passport.py) for local and CI validation
 - [`scripts/generate_passport_template.py`](./scripts/generate_passport_template.py) for a starter `forkit-passport.json`
 

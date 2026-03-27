@@ -1,0 +1,23 @@
+name: Validate Forkit passport
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "forkit-passport.json"
+      - ".github/workflows/validate-forkit-passport.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "forkit-passport.json"
+      - ".github/workflows/validate-forkit-passport.yml"
+
+jobs:
+  validate-passport:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: arpitasarker01/Forkit_Dev/.github/actions/validate-passport@v0.1.0
+        with:
+          passport-path: forkit-passport.json
