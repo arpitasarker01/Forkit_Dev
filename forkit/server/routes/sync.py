@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, Body, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, Header, HTTPException, status
 
-from ...registry.local import LocalRegistry
-from ..deps import get_registry
+from ..config import ServerSettings
+from ..deps import get_settings, get_sync_store
+from ..sync_store import SyncStore
 
 router = APIRouter(tags=["sync"])
 
@@ -93,8 +94,18 @@ def _validate_sync_envelope(payload: Any) -> dict[str, Any]:
 @router.post("/sync/passports", status_code=status.HTTP_202_ACCEPTED)
 def receive_sync_batch(
     payload: dict[str, Any] = Body(...),
-    registry: LocalRegistry = Depends(get_registry),
+    authorization: str | None = Header(None),
+    settings: ServerSettings = Depends(get_settings),
+    sync_store: SyncStore = Depends(get_sync_store),
 ) -> dict[str, Any]:
     """Receive and persist a generic passport change batch for later processing."""
+    if settings.sync_bearer_token is not None:
+        expected = f"Bearer {settings.sync_bearer_token}"
+        if authorization != expected:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid or missing bearer token.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
     envelope = _validate_sync_envelope(payload)
-    return registry.ingest_sync_batch(envelope)
+    return sync_store.ingest_sync_batch(envelope)

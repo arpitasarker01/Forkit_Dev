@@ -36,6 +36,11 @@ def service_info(
             "swagger": settings.docs_url,
             "redoc": settings.redoc_url,
         },
+        "sync": {
+            "backend": settings.sync_backend,
+            "auth_enabled": settings.sync_bearer_token is not None,
+            "postgres_schema": settings.sync_postgres_schema if settings.sync_backend == "postgres" else None,
+        },
     }
 
 

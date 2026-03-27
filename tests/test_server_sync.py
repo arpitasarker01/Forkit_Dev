@@ -101,3 +101,43 @@ class TestServerSync:
 
         assert response.status_code == 422
         assert "document" in response.json()["detail"]
+
+    def test_sync_passports_enforces_bearer_token_when_configured(self, tmp_path):
+        settings = ServerSettings(
+            registry_root=tmp_path / "registry",
+            sync_bearer_token="secret-token",
+        )
+        payload = {
+            "source": "local-dev",
+            "target": "main-server",
+            "after": 0,
+            "cursor": 1,
+            "has_more": False,
+            "items": [
+                {
+                    "cursor": 1,
+                    "operation": "delete",
+                    "passport_id": MODEL_ID,
+                    "passport_type": "model",
+                    "changed_at": "2026-03-27T12:00:00+00:00",
+                    "document": None,
+                }
+            ],
+        }
+
+        with TestClient(create_app(settings=settings)) as client:
+            missing = client.post("/sync/passports", json=payload)
+            wrong = client.post(
+                "/sync/passports",
+                json=payload,
+                headers={"Authorization": "Bearer wrong-token"},
+            )
+            accepted = client.post(
+                "/sync/passports",
+                json=payload,
+                headers={"Authorization": "Bearer secret-token"},
+            )
+
+        assert missing.status_code == 401
+        assert wrong.status_code == 401
+        assert accepted.status_code == 202

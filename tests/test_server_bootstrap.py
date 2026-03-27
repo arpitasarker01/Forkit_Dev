@@ -1,5 +1,6 @@
 """Bootstrap tests for the local FastAPI service."""
 
+import pytest
 from fastapi.testclient import TestClient
 from typer.testing import CliRunner
 
@@ -35,6 +36,9 @@ class TestServerBootstrap:
         assert root_json["registry"]["sync_state_path"] == str(settings.registry_root / "sync_state.json")
         assert root_json["registry"]["sync_batches_path"] == str(settings.registry_root / "sync_inbox.jsonl")
         assert root_json["registry"]["sync_inbox_dir"] == str(settings.registry_root / "sync_inbox")
+        assert root_json["sync"]["backend"] == "local"
+        assert root_json["sync"]["auth_enabled"] is False
+        assert root_json["sync"]["postgres_schema"] is None
         assert health_json["status"] == "ok"
         assert health_json["initialized"] is True
         assert ready_json["status"] == "ready"
@@ -57,3 +61,7 @@ class TestServerBootstrap:
         result = runner.invoke(app, ["serve", "--help"])
         assert result.exit_code == 0
         assert "Run the local HTTP service over the registry." in result.stdout
+
+    def test_invalid_sync_backend_is_rejected(self):
+        with pytest.raises(ValueError, match="Unsupported sync backend"):
+            ServerSettings(sync_backend="redis")

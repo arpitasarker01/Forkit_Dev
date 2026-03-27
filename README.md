@@ -44,6 +44,7 @@ pip install "forkit-core[cli]"        # Typer CLI
 pip install "forkit-core[langchain]"  # LangChain adapter helpers
 pip install "forkit-core[langgraph]"  # LangGraph adapter helpers
 pip install "forkit-core[server]"     # local FastAPI service
+pip install "forkit-core[postgres]"   # Postgres-backed sync receiver
 pip install "forkit-core[all]"        # everything
 ```
 
@@ -281,6 +282,15 @@ filesystem-backed registry:
 forkit serve --host 127.0.0.1 --port 8000
 ```
 
+Optional receiver configuration:
+
+- `FORKIT_SYNC_BACKEND=local|postgres`
+- `FORKIT_SYNC_POSTGRES_DSN=postgresql://...`
+- `FORKIT_SYNC_POSTGRES_SCHEMA=public`
+- `FORKIT_SYNC_BEARER_TOKEN=...`
+
+Use `forkit-core[postgres]` when `FORKIT_SYNC_BACKEND=postgres`.
+
 Bootstrap routes:
 
 - `GET /`       — service info and registry paths
@@ -342,10 +352,15 @@ Local sync state is stored in `sync_state.json` and only tracks acknowledged
 cursors per target. It does not affect `passport_id`.
 
 The local service also ships a reference receiver for the same contract at
-`POST /sync/passports`. Incoming envelopes are stored append-only under:
+`POST /sync/passports`. In `local` mode, incoming envelopes are stored
+append-only under:
 
 - `sync_inbox.jsonl` — raw received batch envelopes
 - `sync_inbox/<target>/<passport_id>.jsonl` — received records keyed by passport ID
+
+In `postgres` mode, the same envelopes are stored idempotently by
+`target + cursor` in `forkit_sync_batches`, `forkit_sync_items`, and
+`forkit_sync_passports`.
 
 ---
 
