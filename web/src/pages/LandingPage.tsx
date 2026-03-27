@@ -78,7 +78,7 @@ export function LandingPage() {
             </div>
             <div className="inline-flex items-center gap-2 rounded-full border border-border/75 bg-white/78 px-3.5 py-2 shadow-[0_10px_22px_rgba(42,31,85,0.05)]">
               <GitBranch className="h-4 w-4 text-brand" />
-              <span className="font-medium text-text">LangChain and LangGraph verified adapters</span>
+              <span className="font-medium text-text">LangChain, LangGraph, and OpenClaw adapters</span>
             </div>
           </div>
 

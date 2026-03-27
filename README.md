@@ -26,8 +26,9 @@ Recommended first runs:
 - Generic self-host sync: [`examples/self_host_sync_quickstart.py`](./examples/self_host_sync_quickstart.py)
 
 If you are evaluating Forkit for framework adoption, start with LangGraph or
-LangChain first. They show the current adapter pattern that can later be
-extended to other ecosystems.
+LangChain first. They show the deepest current adapter pattern. OpenClaw is
+available now as a thin local adapter for gateway config, plugin manifests,
+tool registration, and hooks.
 
 ---
 
@@ -153,6 +154,12 @@ python scripts/export_hf_model_card.py \
   --output huggingface-model-card.md
 ```
 
+OpenClaw quickstart:
+
+```bash
+python examples/openclaw_quickstart.py
+```
+
 ### Frontend prototype
 
 A React + TypeScript + Vite frontend lives under [`web/`](./web) and is intentionally limited to the open source Forkit Core scope defined in this README.
@@ -249,6 +256,25 @@ python scripts/export_hf_model_card.py \
 ```
 
 The exporter is intentionally compatibility-only for now: it stays local, does not call the Hugging Face API, and simply helps developers reuse Forkit provenance metadata in a repository-friendly model card format.
+
+### OpenClaw adapter
+
+Forkit Core also includes a thin OpenClaw adapter for local gateway and plugin
+surfaces. It reads a local `openclaw.json`, `openclaw.plugin.json`,
+`package.json`, extension entrypoints, and `HOOK.md` files, then derives a
+standard Forkit `AgentPassport` from that material.
+
+Included files:
+
+- [`forkit_openclaw/adapter.py`](./forkit_openclaw/adapter.py) to build and register OpenClaw-derived passports
+- [`examples/openclaw_quickstart.py`](./examples/openclaw_quickstart.py) as the smallest runnable example
+- [`tests/test_openclaw_adapter.py`](./tests/test_openclaw_adapter.py) for adapter coverage
+
+Expected outcome:
+
+- one deterministic passport for a local OpenClaw gateway or plugin surface
+- preserved tool and hook metadata inside standard Forkit passport fields
+- no hosted dependency required
 
 ---
 
