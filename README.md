@@ -41,6 +41,7 @@ With optional extras:
 ```bash
 pip install "forkit-core[pydantic]"   # Pydantic v2 backend + JSON Schema
 pip install "forkit-core[cli]"        # Typer CLI
+pip install "forkit-core[langchain]"  # LangChain adapter helpers
 pip install "forkit-core[langgraph]"  # LangGraph adapter helpers
 pip install "forkit-core[server]"     # local FastAPI service
 pip install "forkit-core[all]"        # everything
@@ -338,6 +339,49 @@ result = bound.invoke({"question": "hello"})
 ```
 
 This is the minimal runtime integration layer for future direct LangGraph hooks.
+
+---
+
+## LangChain Adapter
+
+The repo also ships a thin LangChain-facing adapter in `forkit_langchain`.
+It keeps the same passport registration path as the core SDK, but adds:
+
+- runnable and agent registration based on LangChain graph shape
+- lazy registration wrappers for `invoke` and `stream` style usage
+- a lightweight callback handler that captures runtime event summaries
+
+```python
+from langchain.agents import create_agent
+from langchain_core.language_models.fake_chat_models import FakeListChatModel
+
+from forkit.sdk import ForkitClient
+from forkit_langchain import LangChainAdapter
+
+client = ForkitClient()
+adapter = LangChainAdapter(client=client)
+
+agent = create_agent(
+    model=FakeListChatModel(responses=["hello there"]),
+    system_prompt="Be concise.",
+    name="demo-agent",
+)
+bound = adapter.bind_runnable(
+    agent,
+    name="demo-agent",
+    version="1.0.0",
+    model_id="<model-passport-id>",
+    creator={"name": "Hamza", "organization": "ForkIt"},
+    system_prompt="Be concise.",
+)
+
+result = bound.invoke({"messages": [{"role": "user", "content": "say hi"}]})
+print(bound.passport_id)
+print(bound.runtime_summary()["counts"])
+```
+
+Use [`examples/langchain_quickstart.py`](./examples/langchain_quickstart.py) for
+an end-to-end runnable example.
 
 ---
 
