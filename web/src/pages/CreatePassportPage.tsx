@@ -122,7 +122,7 @@ export function CreatePassportPage() {
             <p className="max-w-3xl text-muted">
               Create a new ModelPassport or AgentPassport using fields that map directly to
               the public Forkit Core README structure. This page is create-only and
-              redirects to Inspect after submit.
+              redirects to Inspect after submit so you can review the new record immediately.
             </p>
           </div>
 
@@ -414,7 +414,7 @@ export function CreatePassportPage() {
                     className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 font-semibold text-[#f1ebdf] shadow-[0_16px_30px_rgba(0,129,144,0.18)] transition-all hover:bg-accent-dark hover:shadow-[0_20px_34px_rgba(0,129,144,0.22)] disabled:cursor-not-allowed disabled:opacity-70"
                   >
                     {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                    {loading ? 'Creating...' : 'Create Mock Passport'}
+                    {loading ? 'Creating...' : 'Create Passport'}
                   </button>
                 </div>
               </div>

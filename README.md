@@ -69,7 +69,7 @@ npm run preview
 
 The frontend includes these screens:
 
-- Landing
+- Home
 - Dashboard
 - Registry
 - Search
@@ -80,6 +80,14 @@ The frontend includes these screens:
 - Registry Stats
 
 Registry is the browse view, Search is for filtering existing passports, and Register Passport creates a new mock-backed record for demonstration.
+
+### Demo screenshots
+
+The included web demo is mock-backed and intended for exploration of the open source Forkit Core concepts that already ship in the schemas, local registry, SDK, CLI, and examples.
+
+| Home | Registry | Inspect |
+|---|---|---|
+| ![Forkit Core Home demo](docs/images/home.png) | ![Forkit Core Registry demo](docs/images/registry.png) | ![Forkit Core Inspect demo](docs/images/inspect.png) |
 
 ---
 

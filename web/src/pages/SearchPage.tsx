@@ -64,7 +64,7 @@ export function SearchPage() {
         <div>
           <h1 className="font-display text-3xl font-bold tracking-tight text-text">Search Registry</h1>
           <p className="mt-1 text-muted">
-            Search and filter existing passports by Passport ID, name, version, creator, or task type.
+            Jump straight to an existing passport with a direct query across Passport ID, name, version, creator, or task type.
           </p>
         </div>
         <div className="flex flex-wrap gap-4 text-sm font-semibold">
@@ -86,7 +86,7 @@ export function SearchPage() {
             <div className="eyebrow">Existing passports only</div>
             <p className="mt-2 max-w-2xl text-sm text-muted">
               This page only finds records already present in the mock registry. It does not
-              create or change passports.
+              create passports, browse the full list, or change stored records.
             </p>
           </div>
           <div className="rounded-full border border-border bg-surface-soft px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted">

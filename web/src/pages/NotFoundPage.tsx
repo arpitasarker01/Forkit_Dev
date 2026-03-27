@@ -14,7 +14,7 @@ export function NotFoundPage() {
           to="/"
           className="mt-8 inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-3 font-semibold text-[#f1ebdf] shadow-[0_14px_28px_rgba(0,129,144,0.18)] transition-all hover:bg-accent-dark hover:shadow-[0_18px_30px_rgba(0,129,144,0.22)]"
         >
-          Return to Landing
+          Return to Home
         </Link>
       </div>
     </div>

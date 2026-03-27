@@ -30,11 +30,13 @@ export function RegistryStatsPage() {
     <div className="mx-auto w-full max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
+          <div className="eyebrow">Local registry summary</div>
           <h1 className="font-display text-3xl font-bold tracking-tight text-text">
             Registry Stats
           </h1>
-          <p className="mt-1 text-muted">
-            Local registry counts and storage layout aligned to the README registry contract.
+          <p className="mt-2 max-w-3xl text-muted">
+            Review the current local registry counts and the on-disk storage layout used by
+            Forkit Core. This page is the summary view, not the recent-activity dashboard.
           </p>
         </div>
         <Link

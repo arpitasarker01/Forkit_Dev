@@ -78,7 +78,7 @@ export function VerifyPassportPage() {
           className="inline-flex items-center gap-2 self-start rounded-full border border-border bg-white/80 px-4 py-2 text-sm font-medium text-muted transition-colors hover:border-accent/30 hover:bg-accent/5 hover:text-accent-dark"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Landing
+          Back to Home
         </Link>
 
         <div className="space-y-4 text-center">

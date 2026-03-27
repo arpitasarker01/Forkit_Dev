@@ -2,7 +2,7 @@ import { Link, NavLink, Outlet } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { label: 'Landing', path: '/' },
+  { label: 'Home', path: '/' },
   { label: 'Dashboard', path: '/dashboard' },
   { label: 'Registry', path: '/registry' },
   { label: 'Search', path: '/search' },
@@ -24,18 +24,18 @@ export function AppShell() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
             <Link to="/" className="group flex items-center gap-4">
-              <div className="brand-panel rounded-[1.4rem] px-3.5 py-2.5 transition-transform group-hover:scale-[1.015]">
+              <div className="brand-panel rounded-[1.55rem] px-4 py-3 shadow-[0_16px_36px_rgba(42,31,85,0.10)] transition-transform group-hover:scale-[1.015]">
                 <img
                   src="/forkit-dev-logo.svg"
                   alt="Forkit Dev"
-                  className="h-11 w-auto object-contain"
+                  className="h-[3rem] w-auto object-contain"
                 />
               </div>
               <div className="space-y-1">
-                <div className="font-display text-[1.85rem] font-extrabold tracking-tight text-text">
+                <div className="font-display text-[1.95rem] font-extrabold tracking-tight text-text">
                   Forkit Core
                 </div>
-                <div className="text-[11px] uppercase tracking-[0.26em] text-muted">
+                <div className="text-[11px] uppercase tracking-[0.24em] text-muted">
                   Open Source Passport Console
                 </div>
               </div>
@@ -46,7 +46,7 @@ export function AppShell() {
                 <NavLink
                   key={item.path}
                   to={item.path}
-                  end={item.path === '/'}
+                  end
                   className={({ isActive }) =>
                     cn(
                       'rounded-full px-4 py-2 text-sm font-semibold transition-all',

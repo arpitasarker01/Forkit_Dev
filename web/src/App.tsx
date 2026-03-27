@@ -21,10 +21,12 @@ function App() {
         <Route path="passports" element={<Navigate to="/registry" replace />} />
         <Route path="passports/create" element={<CreatePassportPage />} />
         <Route path="passports/:passportId" element={<PassportDetailPage />} />
+        <Route path="create" element={<Navigate to="/passports/create" replace />} />
         <Route path="search" element={<SearchPage />} />
         <Route path="verify" element={<VerifyPassportPage />} />
         <Route path="lineage" element={<LineagePage />} />
         <Route path="registry/stats" element={<RegistryStatsPage />} />
+        <Route path="stats" element={<Navigate to="/registry/stats" replace />} />
         <Route path="home" element={<Navigate to="/" replace />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

@@ -27,7 +27,7 @@ const moduleCards = [
 ]
 
 export function LandingPage() {
-  usePageTitle('Landing')
+  usePageTitle('Home')
   const stats = getRegistryStats()
   const featuredPassports = getPassports().slice(0, 3)
   const focusPassport =
@@ -47,14 +47,10 @@ export function LandingPage() {
       <section className="grid grid-cols-1 items-center gap-10 xl:grid-cols-[1.16fr_0.94fr]">
         <div className="space-y-8">
           <div className="inline-flex items-center gap-3 rounded-full border border-border/85 bg-surface px-4 py-2.5 shadow-[0_10px_24px_rgba(42,31,85,0.06)]">
-            <div className="brand-panel rounded-full px-2.5 py-1.5">
-              <img
-                src="/forkit-dev-logo.svg"
-                alt="Forkit Dev"
-                className="h-3.5 w-auto object-contain"
-              />
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10 text-accent shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">
+              <ShieldCheck className="h-4 w-4" />
             </div>
-            <span className="text-sm font-semibold text-primary">README-aligned open source scope</span>
+            <span className="text-sm font-semibold text-primary">Open source demo scope</span>
           </div>
 
           <div className="space-y-5">
