@@ -22,15 +22,14 @@ Design decisions
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from ..domain.hashing import HashEngine
-from ..domain.lineage import LineageGraph
 from ..domain.integrity import verify_passport_id
-from ..schemas import ModelPassport, AgentPassport
+from ..domain.lineage import LineageGraph
+from ..schemas import AgentPassport, ModelPassport
 from .db import RegistryDB
 
 
@@ -138,11 +137,12 @@ class LocalRegistry:
     def delete(self, passport_id: str, *, record_change: bool = True) -> bool:
         deleted = False
         deleted_type: str | None = None
-        for deleted_type, directory in (("model", self.models_dir), ("agent", self.agents_dir)):
+        for passport_type, directory in (("model", self.models_dir), ("agent", self.agents_dir)):
             path = directory / f"{passport_id}.json"
             if path.exists():
                 path.unlink()
                 deleted = True
+                deleted_type = passport_type
                 break
         if deleted:
             with self._db() as db:

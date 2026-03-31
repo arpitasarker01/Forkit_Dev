@@ -1,6 +1,7 @@
 """Tests for the LocalRegistry."""
 
 import pytest
+
 from forkit_core.registry import LocalRegistry
 from forkit_core.schemas import (
     AgentArchitecture,
@@ -9,7 +10,6 @@ from forkit_core.schemas import (
     ModelPassport,
     TaskType,
 )
-
 
 CREATOR = {"name": "Hamza", "organization": "ForkIt"}
 

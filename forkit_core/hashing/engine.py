@@ -44,7 +44,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-
 CHUNK_SIZE: int = 65_536  # 64 KB — efficient for large weight files
 HASH_HEX_LENGTH: int = 64  # SHA-256 produces 32 bytes = 64 hex chars
 

@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 import json
 import re
-from typing import Any, Callable, Protocol
+from collections.abc import Callable
+from datetime import datetime, timezone
+from typing import Any, Protocol
 
 from ..registry.local import LocalRegistry
 

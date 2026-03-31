@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import Any
 
 from forkit.domain.hashing import HashEngine
-from forkit.sdk import ForkitClient
 from forkit.schemas import (
     AgentArchitecture,
     AgentPassport,
@@ -17,6 +16,7 @@ from forkit.schemas import (
     CreatorInfo,
     SystemPromptRecord,
 )
+from forkit.sdk import ForkitClient
 from forkit_langgraph import LangGraphAdapter
 
 try:
@@ -336,7 +336,7 @@ class BoundLangChainRunnable:
         self,
         runnable: Any,
         *,
-        adapter: "LangChainPassportAdapter",
+        adapter: LangChainPassportAdapter,
         registration_kwargs: Mapping[str, Any],
         callback_handler: ForkitLangChainCallbackHandler | None = None,
     ) -> None:
@@ -804,7 +804,7 @@ class LangChainPassportAdapter:
             if args_schema is not None:
                 tool_spec["args_schema"] = self._describe_value(args_schema)
             if hasattr(tool, "return_direct"):
-                tool_spec["return_direct"] = bool(getattr(tool, "return_direct"))
+                tool_spec["return_direct"] = bool(tool.return_direct)
             tool_specs.append(tool_spec)
 
         return tool_specs

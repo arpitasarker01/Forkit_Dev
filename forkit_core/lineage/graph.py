@@ -235,7 +235,7 @@ class LineageGraph:
         Path(path).write_text(self.to_json())
 
     @classmethod
-    def load(cls, path: str | Path) -> "LineageGraph":
+    def load(cls, path: str | Path) -> LineageGraph:
         data = json.loads(Path(path).read_text())
         g = cls()
         for nd in data.get("nodes", []):

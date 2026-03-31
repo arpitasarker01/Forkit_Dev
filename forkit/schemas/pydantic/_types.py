@@ -10,8 +10,6 @@ pydantic/agent.py — the dataclass counterparts live in schemas/types.py.
 
 from __future__ import annotations
 
-from typing import Any
-
 try:
     from pydantic import BaseModel, Field
 except ImportError as e:

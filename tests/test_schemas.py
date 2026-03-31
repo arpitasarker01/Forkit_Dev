@@ -1,13 +1,13 @@
 """Tests for ModelPassport and AgentPassport schemas."""
 
 import pytest
+
 from forkit.domain import verify_passport_id
 from forkit_core.schemas import (
     AgentArchitecture,
     AgentPassport,
     AgentTaskType,
     Architecture,
-    CreatorInfo,
     LicenseType,
     ModelPassport,
     PassportStatus,
@@ -168,11 +168,11 @@ class TestModelPassport:
         assert m2.parent_hash == FAKE_PARENT_HASH
 
     def test_invalid_artifact_hash_rejected(self):
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             make_model(artifact_hash="not-a-valid-hash")
 
     def test_invalid_version_rejected(self):
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             make_model(version="invalid")
 
     def test_short_id(self):
@@ -281,7 +281,7 @@ class TestAgentPassport:
 
     def test_fork_fields(self):
         m = make_model()
-        parent = make_agent(model_id=m.id, name="parent-agent")
+        make_agent(model_id=m.id, name="parent-agent")
         child = make_agent(
             model_id=m.id,
             name="child-agent",

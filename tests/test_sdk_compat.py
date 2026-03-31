@@ -1,9 +1,8 @@
 """SDK contract tests for the canonical and compatibility namespaces."""
 
+from forkit.schemas import AgentArchitecture, AgentTaskType, TaskType
 from forkit.sdk import ForkitClient as CanonicalClient
 from forkit_core.sdk import ForkitClient as CompatibilityClient
-from forkit.schemas import AgentArchitecture, AgentTaskType, TaskType
-
 
 CREATOR = {"name": "Hamza", "organization": "ForkIt"}
 

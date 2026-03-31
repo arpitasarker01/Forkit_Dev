@@ -14,10 +14,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from forkit.sdk import ForkitClient
 from forkit.schemas import TaskType
+from forkit.sdk import ForkitClient
 from forkit_openclaw import OpenClawAdapter
-
 
 CREATOR = {"name": "Hamza", "organization": "ForkIt"}
 

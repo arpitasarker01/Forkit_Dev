@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import json
 from typing import Any
-from urllib.parse import urlencode
 from urllib import error, request
+from urllib.parse import urlencode
 
 from ..registry import LocalRegistry
 

@@ -35,7 +35,7 @@ class ServerSettings:
             )
 
     @classmethod
-    def from_env(cls) -> "ServerSettings":
+    def from_env(cls) -> ServerSettings:
         """Build settings from environment variables when present."""
         registry_root = Path(
             os.getenv("FORKIT_REGISTRY_ROOT", "~/.forkit/registry")

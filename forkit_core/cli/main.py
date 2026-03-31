@@ -17,9 +17,7 @@ Usage:
 from __future__ import annotations
 
 import json
-import sys
 from pathlib import Path
-from typing import Optional
 
 import typer
 import yaml  # PyYAML
@@ -39,6 +37,36 @@ app.add_typer(register_app, name="register")
 
 registry_app = typer.Typer(help="Registry maintenance commands.")
 app.add_typer(registry_app, name="registry")
+_MODEL_CONFIG_ARGUMENT = typer.Argument(
+    ...,
+    help="YAML or JSON config file for the ModelPassport",
+)
+_AGENT_CONFIG_ARGUMENT = typer.Argument(
+    ...,
+    help="YAML or JSON config file for the AgentPassport",
+)
+_PASSPORT_ID_ARGUMENT = typer.Argument(..., help="Full passport ID (SHA-256 hex)")
+_TRACE_ID_ARGUMENT = typer.Argument(..., help="Passport ID to trace")
+_VERIFY_ID_ARGUMENT = typer.Argument(...)
+_SEARCH_QUERY_ARGUMENT = typer.Argument(..., help="Search term (name, creator, org)")
+_REGISTRY_OPTION = typer.Option(None, "--registry", "-r", help="Registry root path")
+_OUTPUT_ID_OPTION = typer.Option(False, "--id", help="Print only the registered ID")
+_RAW_OPTION = typer.Option(False, "--raw", help="Print raw JSON")
+_JSON_OPTION = typer.Option(False, "--json", help="Output as JSON")
+_SEARCH_JSON_OPTION = typer.Option(False, "--json")
+_PASSPORT_TYPE_OPTION = typer.Option(None, "--type", "-t", help="model | agent")
+_STATUS_OPTION = typer.Option(
+    None,
+    "--status",
+    "-s",
+    help="draft | active | deprecated | revoked",
+)
+_DIRECTION_OPTION = typer.Option(
+    "both",
+    "--direction",
+    "-d",
+    help="ancestors | descendants | both",
+)
 
 # ------------------------------------------------------------------ #
 # Helpers
@@ -73,9 +101,9 @@ def _short(id: str) -> str:
 
 @register_app.command("model")
 def register_model(
-    config: Path = typer.Argument(..., help="YAML or JSON config file for the ModelPassport"),
-    registry_root: Optional[str] = typer.Option(None, "--registry", "-r", help="Registry root path"),
-    output_id: bool = typer.Option(False, "--id", help="Print only the registered ID"),
+    config: Path = _MODEL_CONFIG_ARGUMENT,
+    registry_root: str | None = _REGISTRY_OPTION,
+    output_id: bool = _OUTPUT_ID_OPTION,
 ):
     """Register a new **model** passport from a YAML/JSON config file."""
     data = _load_config(config)
@@ -102,9 +130,9 @@ def register_model(
 
 @register_app.command("agent")
 def register_agent(
-    config: Path = typer.Argument(..., help="YAML or JSON config file for the AgentPassport"),
-    registry_root: Optional[str] = typer.Option(None, "--registry", "-r", help="Registry root path"),
-    output_id: bool = typer.Option(False, "--id", help="Print only the registered ID"),
+    config: Path = _AGENT_CONFIG_ARGUMENT,
+    registry_root: str | None = _REGISTRY_OPTION,
+    output_id: bool = _OUTPUT_ID_OPTION,
 ):
     """Register a new **agent** passport from a YAML/JSON config file."""
     data = _load_config(config)
@@ -132,9 +160,9 @@ def register_agent(
 
 @app.command()
 def inspect(
-    passport_id: str = typer.Argument(..., help="Full passport ID (SHA-256 hex)"),
-    registry_root: Optional[str] = typer.Option(None, "--registry", "-r"),
-    raw: bool = typer.Option(False, "--raw", help="Print raw JSON"),
+    passport_id: str = _PASSPORT_ID_ARGUMENT,
+    registry_root: str | None = _REGISTRY_OPTION,
+    raw: bool = _RAW_OPTION,
 ):
     """Inspect a registered passport by ID."""
     reg = _get_registry(registry_root)
@@ -172,10 +200,10 @@ def inspect(
 
 @app.command("list")
 def list_passports(
-    passport_type: Optional[str] = typer.Option(None, "--type", "-t", help="model | agent"),
-    status: Optional[str] = typer.Option(None, "--status", "-s", help="draft | active | deprecated | revoked"),
-    registry_root: Optional[str] = typer.Option(None, "--registry", "-r"),
-    json_output: bool = typer.Option(False, "--json", help="Output as JSON"),
+    passport_type: str | None = _PASSPORT_TYPE_OPTION,
+    status: str | None = _STATUS_OPTION,
+    registry_root: str | None = _REGISTRY_OPTION,
+    json_output: bool = _JSON_OPTION,
 ):
     """List registered passports."""
     reg = _get_registry(registry_root)
@@ -209,9 +237,9 @@ def list_passports(
 
 @app.command()
 def search(
-    query: str = typer.Argument(..., help="Search term (name, creator, org)"),
-    registry_root: Optional[str] = typer.Option(None, "--registry", "-r"),
-    json_output: bool = typer.Option(False, "--json"),
+    query: str = _SEARCH_QUERY_ARGUMENT,
+    registry_root: str | None = _REGISTRY_OPTION,
+    json_output: bool = _SEARCH_JSON_OPTION,
 ):
     """Search passports by name or creator."""
     reg = _get_registry(registry_root)
@@ -235,10 +263,10 @@ def search(
 
 @app.command()
 def lineage(
-    passport_id: str = typer.Argument(..., help="Passport ID to trace"),
-    direction: str = typer.Option("both", "--direction", "-d", help="ancestors | descendants | both"),
-    registry_root: Optional[str] = typer.Option(None, "--registry", "-r"),
-    json_output: bool = typer.Option(False, "--json"),
+    passport_id: str = _TRACE_ID_ARGUMENT,
+    direction: str = _DIRECTION_OPTION,
+    registry_root: str | None = _REGISTRY_OPTION,
+    json_output: bool = _JSON_OPTION,
 ):
     """Trace lineage ancestors and/or descendants of a passport."""
     reg = _get_registry(registry_root)
@@ -284,8 +312,8 @@ def lineage(
 
 @app.command()
 def verify(
-    passport_id: str = typer.Argument(...),
-    registry_root: Optional[str] = typer.Option(None, "--registry", "-r"),
+    passport_id: str = _VERIFY_ID_ARGUMENT,
+    registry_root: str | None = _REGISTRY_OPTION,
 ):
     """Verify the integrity of a stored passport."""
     reg = _get_registry(registry_root)
@@ -303,8 +331,8 @@ def verify(
 
 @app.command()
 def stats(
-    registry_root: Optional[str] = typer.Option(None, "--registry", "-r"),
-    json_output: bool = typer.Option(False, "--json"),
+    registry_root: str | None = _REGISTRY_OPTION,
+    json_output: bool = _JSON_OPTION,
 ):
     """Show registry statistics."""
     reg = _get_registry(registry_root)
@@ -325,7 +353,7 @@ def stats(
 
 @registry_app.command("rebuild-index")
 def rebuild_index(
-    registry_root: Optional[str] = typer.Option(None, "--registry", "-r"),
+    registry_root: str | None = _REGISTRY_OPTION,
 ):
     """Rebuild the SQLite index from JSON passport files."""
     reg = _get_registry(registry_root)

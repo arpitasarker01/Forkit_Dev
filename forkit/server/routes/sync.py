@@ -11,6 +11,10 @@ from ..deps import get_settings, get_sync_store
 from ..sync_store import SyncStore
 
 router = APIRouter(tags=["sync"])
+_SYNC_PAYLOAD_BODY = Body(...)
+_AUTHORIZATION_HEADER = Header(None)
+_SETTINGS_DEP = Depends(get_settings)
+_SYNC_STORE_DEP = Depends(get_sync_store)
 
 
 def _validation_error(message: str) -> HTTPException:
@@ -93,10 +97,10 @@ def _validate_sync_envelope(payload: Any) -> dict[str, Any]:
 
 @router.post("/sync/passports", status_code=status.HTTP_202_ACCEPTED)
 def receive_sync_batch(
-    payload: dict[str, Any] = Body(...),
-    authorization: str | None = Header(None),
-    settings: ServerSettings = Depends(get_settings),
-    sync_store: SyncStore = Depends(get_sync_store),
+    payload: dict[str, Any] = _SYNC_PAYLOAD_BODY,
+    authorization: str | None = _AUTHORIZATION_HEADER,
+    settings: ServerSettings = _SETTINGS_DEP,
+    sync_store: SyncStore = _SYNC_STORE_DEP,
 ) -> dict[str, Any]:
     """Receive and persist a generic passport change batch for later processing."""
     if settings.sync_bearer_token is not None:

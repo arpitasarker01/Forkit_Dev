@@ -2,15 +2,15 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from langchain_core.language_models.fake_chat_models import FakeListChatModel
 
-from forkit.sdk import ForkitClient
 from forkit.schemas import TaskType
+from forkit.sdk import ForkitClient
 from forkit_langchain import LangChainAdapter
 
 

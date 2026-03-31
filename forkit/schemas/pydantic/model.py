@@ -17,8 +17,8 @@ try:
 except ImportError as e:
     raise ImportError("pydantic>=2 is required for forkit.schemas.pydantic") from e
 
-from ..enums import Architecture, LicenseType, PassportStatus, TaskType
 from ...domain.identity import compute_id, validate_hash, validate_version
+from ..enums import Architecture, LicenseType, PassportStatus, TaskType
 from ._types import _CreatorInfoModel, _ModelCapabilitiesModel, _TrainingDataRefModel
 
 
@@ -98,7 +98,7 @@ class ModelPassport(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def _compute_id(self) -> "ModelPassport":
+    def _compute_id(self) -> ModelPassport:
         if not self.id:
             creator = self.creator
             org  = creator.organization if hasattr(creator, "organization") else None
@@ -123,7 +123,7 @@ class ModelPassport(BaseModel):
         return self.id[:length]
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "ModelPassport":
+    def from_dict(cls, d: dict[str, Any]) -> ModelPassport:
         d = dict(d)
         d.pop("passport_type", None)
         return cls.model_validate(d)

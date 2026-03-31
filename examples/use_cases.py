@@ -21,34 +21,37 @@ from pathlib import Path
 # Make the package importable when run from any working directory
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from forkit.schemas import (
-    AgentArchitecture,
-    AgentPassport,
-    AgentTaskType,
-    Architecture,
-    CreatorInfo,
-    LicenseType,
-    ModelPassport,
-    PassportStatus,
-    TaskType,
-    _PYDANTIC_AVAILABLE,
-)
 from forkit.domain import (
+    EdgeType,
     HashEngine,
     LineageEdge,
     LineageGraph,
     LineageNode,
     NodeType,
-    EdgeType,
-    verify_passport_id,
+)
+from forkit.domain.identity import validate_hash
+from forkit.schemas import (
+    _PYDANTIC_AVAILABLE,
+    AgentArchitecture,
+    AgentPassport,
+    AgentTaskType,
+    Architecture,
+    LicenseType,
+    ModelPassport,
+    PassportStatus,
+    TaskType,
 )
 
 # ── Terminal colour helpers ────────────────────────────────────────────────────
 
-R  = "\033[0m";  B  = "\033[1m"
-G  = "\033[92m"; C  = "\033[96m"
-Y  = "\033[93m"; BL = "\033[94m"
-GR = "\033[90m"; RD = "\033[91m"
+R = "\033[0m"
+B = "\033[1m"
+G = "\033[92m"
+C = "\033[96m"
+Y = "\033[93m"
+BL = "\033[94m"
+GR = "\033[90m"
+RD = "\033[91m"
 
 H = HashEngine()
 
@@ -420,8 +423,6 @@ ok("AgentPassport roundtrip preserves all fields and ID")
 # ══════════════════════════════════════════════════════════════════════════════
 
 hdr(10, "Reject invalid hash input (field validation)")
-
-from forkit.domain.identity import validate_hash
 
 cases = [
     ("too short",      "abc123"),

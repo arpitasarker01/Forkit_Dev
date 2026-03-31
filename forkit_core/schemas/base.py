@@ -26,7 +26,6 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-
 # ──────────────────────────────────────────────────────────────────────────────
 # Shared enumerations
 # ──────────────────────────────────────────────────────────────────────────────
@@ -175,7 +174,7 @@ class BasePassport(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def _assign_id(self) -> "BasePassport":
+    def _assign_id(self) -> BasePassport:
         if not self.id:
             self.id = self._compute_id()
         return self
@@ -208,7 +207,7 @@ class BasePassport(BaseModel):
         return self.model_dump(mode="json")
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "BasePassport":
+    def from_dict(cls, data: dict[str, Any]) -> BasePassport:
         return cls(**data)
 
     def short_id(self, length: int = 12) -> str:

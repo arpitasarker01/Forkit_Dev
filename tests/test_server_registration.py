@@ -6,7 +6,6 @@ from fastapi.testclient import TestClient
 
 from forkit.server import ServerSettings, create_app
 
-
 CREATOR = {"name": "Hamza", "organization": "ForkIt"}
 
 

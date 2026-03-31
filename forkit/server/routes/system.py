@@ -10,12 +10,14 @@ from ..config import ServerSettings
 from ..deps import get_registry, get_settings
 
 router = APIRouter(tags=["system"])
+_SETTINGS_DEP = Depends(get_settings)
+_REGISTRY_DEP = Depends(get_registry)
 
 
 @router.get("/")
 def service_info(
-    settings: ServerSettings = Depends(get_settings),
-    registry: LocalRegistry = Depends(get_registry),
+    settings: ServerSettings = _SETTINGS_DEP,
+    registry: LocalRegistry = _REGISTRY_DEP,
 ) -> dict[str, object]:
     """Basic service metadata and registry location."""
     return {
@@ -46,8 +48,8 @@ def service_info(
 
 @router.get("/healthz")
 def health(
-    settings: ServerSettings = Depends(get_settings),
-    registry: LocalRegistry = Depends(get_registry),
+    settings: ServerSettings = _SETTINGS_DEP,
+    registry: LocalRegistry = _REGISTRY_DEP,
 ) -> dict[str, object]:
     """Liveness check for the local service process."""
     return {
@@ -59,8 +61,8 @@ def health(
 
 @router.get("/readyz")
 def ready(
-    settings: ServerSettings = Depends(get_settings),
-    registry: LocalRegistry = Depends(get_registry),
+    settings: ServerSettings = _SETTINGS_DEP,
+    registry: LocalRegistry = _REGISTRY_DEP,
 ) -> dict[str, object]:
     """Readiness check for the local registry bootstrap."""
     return {

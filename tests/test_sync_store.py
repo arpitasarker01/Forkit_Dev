@@ -8,7 +8,6 @@ import pytest
 
 from forkit.server.sync_store import PostgresSyncStore
 
-
 MODEL_ID = "m" * 64
 
 
@@ -73,7 +72,7 @@ class FakeCursor:
     def fetchone(self) -> tuple[Any, ...] | None:
         return self._fetchone
 
-    def __enter__(self) -> "FakeCursor":
+    def __enter__(self) -> FakeCursor:
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:
@@ -87,7 +86,7 @@ class FakeConnection:
     def cursor(self) -> FakeCursor:
         return FakeCursor(self._state)
 
-    def __enter__(self) -> "FakeConnection":
+    def __enter__(self) -> FakeConnection:
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:

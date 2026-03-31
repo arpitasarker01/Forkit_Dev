@@ -19,6 +19,27 @@ except ImportError:  # pragma: no cover - FastAPI installs pydantic in practice
     ValidationError = ValueError  # type: ignore[assignment]
 
 router = APIRouter(tags=["passports"])
+_REQUIRED_BODY = Body(...)
+_REGISTRY_DEP = Depends(get_registry)
+_LINEAGE_DIRECTION_QUERY = Query(
+    "both",
+    description="Which lineage directions to include.",
+)
+_EXPORT_AFTER_QUERY = Query(
+    0,
+    ge=0,
+    description="Return only changes with a cursor greater than this value.",
+)
+_EXPORT_LIMIT_QUERY = Query(
+    100,
+    ge=1,
+    le=1000,
+    description="Maximum number of change records to return.",
+)
+_EXPORT_TYPE_QUERY = Query(
+    None,
+    description="Optional passport type filter.",
+)
 
 
 def _validation_error(exc: Exception) -> HTTPException:
@@ -77,8 +98,8 @@ def _node_from_passport(passport: ModelPassport | AgentPassport) -> dict[str, An
 
 @router.post("/models", status_code=status.HTTP_201_CREATED)
 def register_model(
-    payload: dict[str, Any] = Body(...),
-    registry: LocalRegistry = Depends(get_registry),
+    payload: dict[str, Any] = _REQUIRED_BODY,
+    registry: LocalRegistry = _REGISTRY_DEP,
 ) -> dict[str, Any]:
     """Create and persist a model passport in the local registry."""
     try:
@@ -92,8 +113,8 @@ def register_model(
 
 @router.post("/agents", status_code=status.HTTP_201_CREATED)
 def register_agent(
-    payload: dict[str, Any] = Body(...),
-    registry: LocalRegistry = Depends(get_registry),
+    payload: dict[str, Any] = _REQUIRED_BODY,
+    registry: LocalRegistry = _REGISTRY_DEP,
 ) -> dict[str, Any]:
     """Create and persist an agent passport in the local registry."""
     try:
@@ -108,7 +129,7 @@ def register_agent(
 @router.get("/passports/{passport_id}", response_model=None)
 def get_passport(
     passport_id: str,
-    registry: LocalRegistry = Depends(get_registry),
+    registry: LocalRegistry = _REGISTRY_DEP,
 ) -> dict[str, Any] | JSONResponse:
     """Retrieve any stored passport by ID."""
     passport = registry.get(passport_id)
@@ -125,7 +146,7 @@ def get_passport(
 @router.post("/verify/{passport_id}", response_model=None)
 def verify_passport(
     passport_id: str,
-    registry: LocalRegistry = Depends(get_registry),
+    registry: LocalRegistry = _REGISTRY_DEP,
 ) -> dict[str, Any] | JSONResponse:
     """Verify a stored passport against its deterministic ID."""
     result = registry.verify_passport(passport_id)
@@ -150,11 +171,8 @@ def verify_passport(
 @router.get("/lineage/{passport_id}", response_model=None)
 def get_lineage(
     passport_id: str,
-    direction: Literal["ancestors", "descendants", "both"] = Query(
-        "both",
-        description="Which lineage directions to include.",
-    ),
-    registry: LocalRegistry = Depends(get_registry),
+    direction: Literal["ancestors", "descendants", "both"] = _LINEAGE_DIRECTION_QUERY,
+    registry: LocalRegistry = _REGISTRY_DEP,
 ) -> dict[str, Any] | JSONResponse:
     """Return lineage data for a stored passport."""
     passport = registry.get(passport_id)
@@ -181,22 +199,10 @@ def get_lineage(
 
 @router.get("/export")
 def export_passports(
-    after: int = Query(
-        0,
-        ge=0,
-        description="Return only changes with a cursor greater than this value.",
-    ),
-    limit: int = Query(
-        100,
-        ge=1,
-        le=1000,
-        description="Maximum number of change records to return.",
-    ),
-    passport_type: Literal["model", "agent"] | None = Query(
-        None,
-        description="Optional passport type filter.",
-    ),
-    registry: LocalRegistry = Depends(get_registry),
+    after: int = _EXPORT_AFTER_QUERY,
+    limit: int = _EXPORT_LIMIT_QUERY,
+    passport_type: Literal["model", "agent"] | None = _EXPORT_TYPE_QUERY,
+    registry: LocalRegistry = _REGISTRY_DEP,
 ) -> dict[str, Any]:
     """Export cursor-ordered passport changes for external sync."""
     return registry.export_changes(

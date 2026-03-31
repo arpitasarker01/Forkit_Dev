@@ -10,9 +10,8 @@ from urllib.parse import parse_qs, urlparse
 
 import pytest
 
-from forkit.sdk import ForkitClient
 from forkit.schemas import AgentArchitecture, AgentTaskType, TaskType
-
+from forkit.sdk import ForkitClient
 
 CREATOR = {"name": "Hamza", "organization": "ForkIt"}
 

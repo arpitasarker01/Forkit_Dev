@@ -5,20 +5,14 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from forkit.domain.identity import validate_hash
-from forkit.domain.integrity import verify_passport_id
-from forkit.schemas import AgentPassport, ModelPassport
-
-PASSPORT_TYPES = {
-    "agent": AgentPassport,
-    "model": ModelPassport,
-}
+if TYPE_CHECKING:
+    from forkit.schemas import AgentPassport, ModelPassport
 
 
 def parse_args() -> argparse.Namespace:
@@ -60,16 +54,26 @@ def load_json(path: Path) -> dict[str, Any]:
     return payload
 
 
+def get_passport_types() -> dict[str, type[ModelPassport | AgentPassport]]:
+    from forkit.schemas import AgentPassport, ModelPassport
+
+    return {
+        "agent": AgentPassport,
+        "model": ModelPassport,
+    }
+
+
 def instantiate_passport(payload: dict[str, Any]) -> ModelPassport | AgentPassport:
+    passport_types = get_passport_types()
     passport_type = payload.get("passport_type")
-    if passport_type not in PASSPORT_TYPES:
-        allowed = ", ".join(sorted(PASSPORT_TYPES))
+    if passport_type not in passport_types:
+        allowed = ", ".join(sorted(passport_types))
         raise ValueError(
             f"`passport_type` must be one of: {allowed}. Got: {passport_type!r}"
         )
 
     try:
-        passport = PASSPORT_TYPES[passport_type].from_dict(payload)
+        passport = passport_types[passport_type].from_dict(payload)
     except Exception as exc:  # noqa: BLE001 - surface schema errors verbatim for CI users
         raise ValueError(str(exc)) from exc
 
@@ -78,6 +82,8 @@ def instantiate_passport(payload: dict[str, Any]) -> ModelPassport | AgentPasspo
 
 def validate_structural_fields(payload: dict[str, Any]) -> None:
     if payload.get("passport_type") == "agent":
+        from forkit.domain.identity import validate_hash
+
         try:
             validate_hash(payload.get("model_id"))
         except ValueError as exc:
@@ -87,6 +93,9 @@ def validate_structural_fields(payload: dict[str, Any]) -> None:
 
 
 def validate_id(path: Path, payload: dict[str, Any], derived_id: str) -> None:
+    from forkit.domain.identity import validate_hash
+    from forkit.domain.integrity import verify_passport_id
+
     stored_id = payload.get("id")
     if not stored_id:
         raise ValueError(

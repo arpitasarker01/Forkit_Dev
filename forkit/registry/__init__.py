@@ -1,6 +1,6 @@
 """forkit.registry — JSON + SQLite local passport store."""
 
-from .local import LocalRegistry
 from .db import RegistryDB
+from .local import LocalRegistry
 
 __all__ = ["LocalRegistry", "RegistryDB"]

@@ -1,13 +1,9 @@
 """Tests for the HashEngine — verifies reproducibility across environments."""
 
-import json
-import os
-import tempfile
-from pathlib import Path
 
 import pytest
-from forkit_core.hashing import HashEngine
 
+from forkit_core.hashing import HashEngine
 
 FAKE_HASH = "a" * 64
 

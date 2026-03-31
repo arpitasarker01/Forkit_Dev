@@ -13,22 +13,15 @@ from pathlib import Path
 # Ensure the repo root is on sys.path so `import forkit` works from any cwd
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+
 import pytest
-import tempfile
 
 from forkit.schemas import (
-    AgentPassport,
-    AgentArchitecture,
-    AgentTaskType,
     Architecture,
     CreatorInfo,
-    LicenseType,
     ModelPassport,
-    PassportStatus,
     TaskType,
 )
-from forkit.domain import HashEngine
-
 
 CREATOR_DICT = {"name": "Hamza", "organization": "ForkIt"}
 CREATOR      = CreatorInfo(name="Hamza", organization="ForkIt")

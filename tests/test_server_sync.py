@@ -8,7 +8,6 @@ from fastapi.testclient import TestClient
 
 from forkit.server import ServerSettings, create_app
 
-
 MODEL_ID = "m" * 64
 AGENT_ID = "a" * 64
 

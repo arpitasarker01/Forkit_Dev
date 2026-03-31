@@ -24,8 +24,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from .base import BasePassport, LicenseType  # re-exported
-
+from .base import BasePassport  # re-exported
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Enumerations

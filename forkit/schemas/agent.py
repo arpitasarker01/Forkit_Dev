@@ -102,7 +102,7 @@ class AgentPassport(BasePassport):
         super().__post_init__()
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "AgentPassport":
+    def from_dict(cls, d: dict[str, Any]) -> AgentPassport:
         d = dict(d)
         d.pop("passport_type", None)
         if isinstance(d.get("creator"), dict):

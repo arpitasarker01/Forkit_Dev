@@ -22,19 +22,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 # ── forkit_core imports ────────────────────────────────────────────────────────
 from forkit_core import (
-    HashEngine,
-    ModelPassport,
-    AgentPassport,
     _PYDANTIC_AVAILABLE,
-)
-from forkit_core.schemas import (
-    Architecture,
-    AgentArchitecture,
-    AgentTaskType,
-    CreatorInfo,
-    LicenseType,
-    PassportStatus,
-    TaskType,
+    AgentPassport,
+    ModelPassport,
 )
 from forkit_core.hashing.engine import HashEngine as H
 from forkit_core.lineage.graph import (
@@ -44,13 +34,26 @@ from forkit_core.lineage.graph import (
     LineageNode,
     NodeType,
 )
+from forkit_core.schemas import (
+    AgentArchitecture,
+    AgentTaskType,
+    Architecture,
+    LicenseType,
+    PassportStatus,
+    TaskType,
+)
+from forkit_core.schemas._compat import _validate_hash
 
 # ── colour helpers ─────────────────────────────────────────────────────────────
 
-RESET  = "\033[0m";  BOLD  = "\033[1m"
-GREEN  = "\033[92m"; CYAN  = "\033[96m"
-YELLOW = "\033[93m"; BLUE  = "\033[94m"
-GREY   = "\033[90m"; RED   = "\033[91m"
+RESET = "\033[0m"
+BOLD = "\033[1m"
+GREEN = "\033[92m"
+CYAN = "\033[96m"
+YELLOW = "\033[93m"
+BLUE = "\033[94m"
+GREY = "\033[90m"
+RED = "\033[91m"
 
 
 def hdr(n: int, title: str) -> None:
@@ -403,8 +406,6 @@ ok("AgentPassport roundtrip preserves all fields and ID")
 
 hdr(10, "Reject invalid hash input (field validation)")
 
-from forkit_core.schemas._compat import _validate_hash
-
 cases = [
     ("too short",    "abc123"),
     ("uppercase hex","A" * 64),    # normalised to lowercase → accepted
@@ -426,7 +427,7 @@ ok("Valid 64-char lowercase hex accepted by ModelPassport")
 try:
     ModelPassport(**_base, artifact_hash="NOT-A-VALID-HASH")
     print(f"  {RED}✗  Should have raised ValueError!{RESET}")
-except (ValueError, Exception):
+except ValueError:
     ok("Invalid artifact_hash correctly raises ValueError")
 
 # ── Final summary ──────────────────────────────────────────────────────────────

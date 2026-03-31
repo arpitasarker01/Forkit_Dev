@@ -29,7 +29,7 @@ class CreatorInfo:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "CreatorInfo":
+    def from_dict(cls, d: dict[str, Any]) -> CreatorInfo:
         known = {"name", "organization", "email", "url"}
         return cls(**{k: v for k, v in d.items() if k in known})
 
@@ -48,7 +48,7 @@ class TrainingDataRef:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "TrainingDataRef":
+    def from_dict(cls, d: dict[str, Any]) -> TrainingDataRef:
         known = {"name", "url", "hash", "size_tokens", "cutoff_date"}
         return cls(**{k: v for k, v in d.items() if k in known})
 
@@ -68,7 +68,7 @@ class ModelCapabilities:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "ModelCapabilities":
+    def from_dict(cls, d: dict[str, Any]) -> ModelCapabilities:
         known = {
             "modalities", "context_length", "supports_function_calling",
             "supports_streaming", "languages", "benchmark_scores",
@@ -90,7 +90,7 @@ class ToolRef:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "ToolRef":
+    def from_dict(cls, d: dict[str, Any]) -> ToolRef:
         known = {"name", "version", "description", "source_url", "hash"}
         return cls(**{k: v for k, v in d.items() if k in known})
 
@@ -109,7 +109,7 @@ class AgentCapabilities:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "AgentCapabilities":
+    def from_dict(cls, d: dict[str, Any]) -> AgentCapabilities:
         known = {
             "max_iterations", "supports_streaming",
             "supports_multi_turn", "supports_tool_use", "languages",
@@ -130,6 +130,6 @@ class SystemPromptRecord:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "SystemPromptRecord":
+    def from_dict(cls, d: dict[str, Any]) -> SystemPromptRecord:
         known = {"hash", "length_chars", "template_id", "redacted"}
         return cls(**{k: v for k, v in d.items() if k in known})

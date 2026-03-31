@@ -33,7 +33,6 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any
 
-
 _PYDANTIC_AVAILABLE: bool = False
 
 
@@ -241,7 +240,7 @@ class CreatorInfo:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "CreatorInfo":
+    def from_dict(cls, d: dict[str, Any]) -> CreatorInfo:
         valid = {"name", "organization", "email", "url"}
         return cls(**{k: v for k, v in d.items() if k in valid})
 
@@ -260,7 +259,7 @@ class TrainingDataRef:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "TrainingDataRef":
+    def from_dict(cls, d: dict[str, Any]) -> TrainingDataRef:
         return cls(**{k: v for k, v in d.items()
                       if k in {"name", "url", "hash", "size_tokens", "cutoff_date"}})
 
@@ -280,7 +279,7 @@ class ModelCapabilities:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "ModelCapabilities":
+    def from_dict(cls, d: dict[str, Any]) -> ModelCapabilities:
         valid = {"modalities", "context_length", "supports_function_calling",
                  "supports_streaming", "languages", "benchmark_scores"}
         return cls(**{k: v for k, v in d.items() if k in valid})
@@ -300,7 +299,7 @@ class ToolRef:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "ToolRef":
+    def from_dict(cls, d: dict[str, Any]) -> ToolRef:
         valid = {"name", "version", "description", "source_url", "hash"}
         return cls(**{k: v for k, v in d.items() if k in valid})
 
@@ -319,7 +318,7 @@ class AgentCapabilities:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "AgentCapabilities":
+    def from_dict(cls, d: dict[str, Any]) -> AgentCapabilities:
         valid = {"max_iterations", "supports_streaming", "supports_multi_turn",
                  "supports_tool_use", "languages"}
         return cls(**{k: v for k, v in d.items() if k in valid})
@@ -338,7 +337,7 @@ class SystemPromptRecord:
         return dataclasses.asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "SystemPromptRecord":
+    def from_dict(cls, d: dict[str, Any]) -> SystemPromptRecord:
         valid = {"hash", "length_chars", "template_id", "redacted"}
         return cls(**{k: v for k, v in d.items() if k in valid})
 
@@ -424,7 +423,7 @@ class BasePassport:
         return json.loads(json.dumps(raw, default=_to_json_safe))
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "BasePassport":
+    def from_dict(cls, d: dict[str, Any]) -> BasePassport:
         """Reconstruct from a dict.  If 'id' is absent it is re-derived."""
         d = dict(d)
         d.pop("passport_type", None)      # frozen field, set by subclass
@@ -505,7 +504,7 @@ class ModelPassport(BasePassport):
         return d
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "ModelPassport":
+    def from_dict(cls, d: dict[str, Any]) -> ModelPassport:
         d = dict(d)
         d.pop("passport_type", None)
         if isinstance(d.get("creator"), dict):
@@ -586,7 +585,7 @@ class AgentPassport(BasePassport):
         super().__post_init__()
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "AgentPassport":
+    def from_dict(cls, d: dict[str, Any]) -> AgentPassport:
         d = dict(d)
         d.pop("passport_type", None)
         if isinstance(d.get("creator"), dict):

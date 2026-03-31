@@ -4,10 +4,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from forkit.sdk import ForkitClient
 from forkit.schemas import TaskType
+from forkit.sdk import ForkitClient
 from forkit_openclaw import OpenClawAdapter
-
 
 CREATOR = {"name": "Hamza", "organization": "ForkIt"}
 

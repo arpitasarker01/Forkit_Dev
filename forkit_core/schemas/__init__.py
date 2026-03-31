@@ -1,6 +1,7 @@
 """Compatibility shim for legacy `forkit_core.schemas` imports."""
 
 from forkit.schemas import (
+    _PYDANTIC_AVAILABLE,
     AgentArchitecture,
     AgentCapabilities,
     AgentPassport,
@@ -11,15 +12,14 @@ from forkit.schemas import (
     CreatorInfo,
     LicenseType,
     MemoryType,
+    Modality,
     ModelCapabilities,
     ModelPassport,
-    Modality,
     PassportStatus,
     SystemPromptRecord,
     TaskType,
     ToolRef,
     TrainingDataRef,
-    _PYDANTIC_AVAILABLE,
 )
 
 __all__ = [

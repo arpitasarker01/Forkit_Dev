@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import inspect
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 from forkit.domain.hashing import HashEngine
-from forkit.sdk import ForkitClient
 from forkit.schemas import (
     AgentArchitecture,
     AgentPassport,
@@ -15,6 +15,7 @@ from forkit.schemas import (
     CreatorInfo,
     SystemPromptRecord,
 )
+from forkit.sdk import ForkitClient
 
 
 class BoundLangGraphRunnable:
@@ -24,7 +25,7 @@ class BoundLangGraphRunnable:
         self,
         runnable: Any,
         *,
-        adapter: "LangGraphPassportAdapter",
+        adapter: LangGraphPassportAdapter,
         registration_kwargs: Mapping[str, Any],
     ) -> None:
         self.runnable = runnable

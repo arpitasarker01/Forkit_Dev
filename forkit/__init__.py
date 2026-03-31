@@ -29,38 +29,38 @@ __version__ = "0.1.0"
 
 # ── Domain (always available — zero dependencies) ──────────────────────────────
 from .domain import (
+    EdgeType,
     HashEngine,
-    hash_engine,
+    LineageEdge,
     LineageGraph,
     LineageNode,
-    LineageEdge,
     NodeType,
-    EdgeType,
-    verify_passport_id,
     compute_metadata_hash,
+    hash_engine,
+    verify_passport_id,
 )
 
 # ── Schemas (dataclass by default; Pydantic v2 when installed) ────────────────
 from .schemas import (
-    ModelPassport,
+    _PYDANTIC_AVAILABLE,
+    AgentArchitecture,
+    AgentCapabilities,
     AgentPassport,
+    AgentRole,
+    AgentTaskType,
+    Architecture,
     BasePassport,
     CreatorInfo,
-    PassportStatus,
     LicenseType,
-    TaskType,
-    Architecture,
-    Modality,
-    AgentTaskType,
-    AgentArchitecture,
-    AgentRole,
     MemoryType,
+    Modality,
     ModelCapabilities,
-    AgentCapabilities,
-    TrainingDataRef,
-    ToolRef,
+    ModelPassport,
+    PassportStatus,
     SystemPromptRecord,
-    _PYDANTIC_AVAILABLE,
+    TaskType,
+    ToolRef,
+    TrainingDataRef,
 )
 
 # ── Registry and SDK (graceful — no hard failure if registry deps missing) ────

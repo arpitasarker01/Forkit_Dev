@@ -1,6 +1,7 @@
 """Tests for the LineageGraph."""
 
 import pytest
+
 from forkit_core.lineage import EdgeType, LineageEdge, LineageGraph, LineageNode, NodeType
 
 

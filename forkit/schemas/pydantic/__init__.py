@@ -30,17 +30,27 @@ try:
     if int(_p.__version__.split(".")[0]) < 2:
         raise ImportError("forkit requires Pydantic v2+")
 
-    from .model import ModelPassport          # noqa: F401
-    from .agent import AgentPassport          # noqa: F401
-    from ..enums import (                     # noqa: F401
-        Architecture, AgentArchitecture, AgentRole, AgentTaskType,
-        LicenseType, MemoryType, Modality, PassportStatus,
+    from ..enums import (  # noqa: F401
+        AgentArchitecture,
+        AgentRole,
+        AgentTaskType,
+        Architecture,
+        LicenseType,
+        MemoryType,
+        Modality,
+        PassportStatus,
         TaskType,
     )
-    from ..types import (                     # noqa: F401
-        AgentCapabilities, CreatorInfo, ModelCapabilities,
-        SystemPromptRecord, ToolRef, TrainingDataRef,
+    from ..types import (  # noqa: F401
+        AgentCapabilities,
+        CreatorInfo,
+        ModelCapabilities,
+        SystemPromptRecord,
+        ToolRef,
+        TrainingDataRef,
     )
+    from .agent import AgentPassport  # noqa: F401
+    from .model import ModelPassport  # noqa: F401
 
     _PYDANTIC_AVAILABLE: bool = True
 

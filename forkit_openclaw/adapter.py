@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 from forkit.domain.hashing import HashEngine
-from forkit.sdk import ForkitClient
 from forkit.schemas import (
     AgentArchitecture,
     AgentCapabilities,
@@ -18,6 +18,7 @@ from forkit.schemas import (
     SystemPromptRecord,
     ToolRef,
 )
+from forkit.sdk import ForkitClient
 
 
 class OpenClawPassportAdapter:

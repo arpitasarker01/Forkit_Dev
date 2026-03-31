@@ -15,6 +15,27 @@ Usage
 
 from __future__ import annotations
 
+from .base import BasePassport  # noqa: F401
+from .enums import (  # noqa: F401
+    AgentArchitecture,
+    AgentRole,
+    AgentTaskType,
+    Architecture,
+    LicenseType,
+    MemoryType,
+    Modality,
+    PassportStatus,
+    TaskType,
+)
+from .types import (  # noqa: F401
+    AgentCapabilities,
+    CreatorInfo,
+    ModelCapabilities,
+    SystemPromptRecord,
+    ToolRef,
+    TrainingDataRef,
+)
+
 # ── Attempt Pydantic v2 backend ────────────────────────────────────────────────
 _PYDANTIC_AVAILABLE: bool = False
 
@@ -28,35 +49,11 @@ except ImportError:
 
 # ── Schema classes ─────────────────────────────────────────────────────────────
 if _PYDANTIC_AVAILABLE:
-    from .pydantic.model import ModelPassport     # noqa: F401
-    from .pydantic.agent import AgentPassport     # noqa: F401
+    from .pydantic.agent import AgentPassport  # noqa: F401
+    from .pydantic.model import ModelPassport  # noqa: F401
 else:
-    from .model import ModelPassport              # noqa: F401
-    from .agent import AgentPassport              # noqa: F401
-
-# ── Enums and types (same source regardless of backend) ───────────────────────
-from .enums import (                              # noqa: F401
-    AgentArchitecture,
-    AgentRole,
-    AgentTaskType,
-    Architecture,
-    LicenseType,
-    MemoryType,
-    Modality,
-    PassportStatus,
-    TaskType,
-)
-from .types import (                              # noqa: F401
-    AgentCapabilities,
-    CreatorInfo,
-    ModelCapabilities,
-    SystemPromptRecord,
-    ToolRef,
-    TrainingDataRef,
-)
-
-# ── Re-export base for advanced use ───────────────────────────────────────────
-from .base import BasePassport                    # noqa: F401
+    from .agent import AgentPassport  # noqa: F401
+    from .model import ModelPassport  # noqa: F401
 
 __all__ = [
     # Passports

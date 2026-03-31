@@ -5,14 +5,14 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from forkit.domain.integrity import verify_passport_id
-from forkit.schemas import ModelPassport
+if TYPE_CHECKING:
+    from forkit.schemas import ModelPassport
 
 PIPELINE_TAG_MAP = {
     "code-completion": "text-generation",
@@ -55,6 +55,9 @@ def parse_args() -> argparse.Namespace:
 
 
 def load_passport(path: Path) -> tuple[dict[str, Any], ModelPassport]:
+    from forkit.domain.integrity import verify_passport_id
+    from forkit.schemas import ModelPassport
+
     if not path.is_file():
         raise FileNotFoundError(f"Passport file not found: {path}")
 

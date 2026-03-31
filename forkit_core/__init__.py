@@ -6,6 +6,7 @@ in v0.1.x as a compatibility layer for existing imports.
 """
 
 from forkit import (
+    _PYDANTIC_AVAILABLE,
     AgentArchitecture,
     AgentCapabilities,
     AgentPassport,
@@ -23,18 +24,17 @@ from forkit import (
     LineageNode,
     LocalRegistry,
     MemoryType,
+    Modality,
     ModelCapabilities,
     ModelPassport,
-    Modality,
     NodeType,
     PassportStatus,
     RemoteSyncBridge,
+    ServerSettings,
     SystemPromptRecord,
     TaskType,
     ToolRef,
     TrainingDataRef,
-    ServerSettings,
-    _PYDANTIC_AVAILABLE,
     __version__,
     create_app,
     hash_engine,

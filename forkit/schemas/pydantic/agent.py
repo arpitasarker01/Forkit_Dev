@@ -14,11 +14,15 @@ try:
 except ImportError as e:
     raise ImportError("pydantic>=2 is required for forkit.schemas.pydantic") from e
 
-from ..enums import (
-    AgentArchitecture, AgentRole, AgentTaskType,
-    LicenseType, MemoryType, PassportStatus,
-)
 from ...domain.identity import compute_id, validate_hash, validate_version
+from ..enums import (
+    AgentArchitecture,
+    AgentRole,
+    AgentTaskType,
+    LicenseType,
+    MemoryType,
+    PassportStatus,
+)
 from ._types import (
     _AgentCapabilitiesModel,
     _CreatorInfoModel,
@@ -118,7 +122,7 @@ class AgentPassport(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def _compute_id(self) -> "AgentPassport":
+    def _compute_id(self) -> AgentPassport:
         if not self.id:
             creator = self.creator
             org  = creator.organization if hasattr(creator, "organization") else None
@@ -143,7 +147,7 @@ class AgentPassport(BaseModel):
         return self.id[:length]
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "AgentPassport":
+    def from_dict(cls, d: dict[str, Any]) -> AgentPassport:
         d = dict(d)
         d.pop("passport_type", None)
         return cls.model_validate(d)

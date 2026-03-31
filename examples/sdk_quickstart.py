@@ -4,14 +4,14 @@ forkit-core SDK quickstart.
 Run: python examples/sdk_quickstart.py
 """
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # Make the package importable when run from the repo root or examples/
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from forkit.sdk import ForkitClient
 from forkit.schemas import AgentArchitecture, AgentTaskType, TaskType
+from forkit.sdk import ForkitClient
 
 client = ForkitClient(registry_root="/tmp/forkit-demo-registry")
 
@@ -56,7 +56,7 @@ for n in ancestors:
 
 # 5. Stats
 stats = client.stats()
-print(f"\nRegistry stats:")
+print("\nRegistry stats:")
 print(f"  Models  : {stats['models']}")
 print(f"  Agents  : {stats['agents']}")
 

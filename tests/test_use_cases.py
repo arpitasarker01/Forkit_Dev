@@ -24,33 +24,29 @@ Use-case index
 from __future__ import annotations
 
 import json
-import tempfile
-from pathlib import Path
 
 import pytest
 
-from forkit.schemas import (
-    AgentArchitecture,
-    AgentPassport,
-    AgentTaskType,
-    Architecture,
-    CreatorInfo,
-    LicenseType,
-    ModelPassport,
-    PassportStatus,
-    TaskType,
-)
 from forkit.domain import (
+    EdgeType,
     HashEngine,
     LineageEdge,
     LineageGraph,
     LineageNode,
     NodeType,
-    EdgeType,
     verify_passport_id,
 )
 from forkit.domain.identity import validate_hash
-
+from forkit.schemas import (
+    AgentArchitecture,
+    AgentPassport,
+    AgentTaskType,
+    Architecture,
+    LicenseType,
+    ModelPassport,
+    PassportStatus,
+    TaskType,
+)
 
 CREATOR = {"name": "Hamza", "organization": "ForkIt"}
 H = HashEngine()

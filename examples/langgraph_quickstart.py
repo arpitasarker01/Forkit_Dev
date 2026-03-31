@@ -4,13 +4,13 @@ Minimal LangGraph adapter quickstart.
 Run: python examples/langgraph_quickstart.py
 """
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from forkit.sdk import ForkitClient
 from forkit.schemas import TaskType
+from forkit.sdk import ForkitClient
 from forkit_langgraph import LangGraphAdapter
 
 REGISTRY_ROOT = "/tmp/forkit-langgraph-demo"

@@ -25,7 +25,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
 
-from ..domain.identity import compute_id, validate_hash, validate_version, to_json_safe
+from ..domain.identity import compute_id, to_json_safe, validate_hash, validate_version
 from .enums import LicenseType, PassportStatus
 from .types import CreatorInfo
 
@@ -106,7 +106,7 @@ class BasePassport:
         return json.loads(json.dumps(raw, default=to_json_safe))
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "BasePassport":
+    def from_dict(cls, d: dict[str, Any]) -> BasePassport:
         """
         Reconstruct a passport from a plain dict.
 

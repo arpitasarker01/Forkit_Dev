@@ -44,7 +44,7 @@ class LocalRegistry:
         """Create directory structure and initialize DB. Idempotent."""
         self.models_dir.mkdir(parents=True, exist_ok=True)
         self.agents_dir.mkdir(parents=True, exist_ok=True)
-        with RegistryDB(self.db_path) as db:
+        with RegistryDB(self.db_path):
             pass  # DDL runs on connect
 
     def _db(self) -> RegistryDB:

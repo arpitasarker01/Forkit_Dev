@@ -11,8 +11,6 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from forkit.schemas import AgentPassport, ModelPassport
-
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -57,6 +55,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def build_model_payload(args: argparse.Namespace) -> dict[str, Any]:
+    from forkit.schemas import ModelPassport
+
     payload = {
         "passport_type": "model",
         "name": args.name or "demo-model",
@@ -77,6 +77,8 @@ def build_model_payload(args: argparse.Namespace) -> dict[str, Any]:
 
 
 def build_agent_payload(args: argparse.Namespace) -> dict[str, Any]:
+    from forkit.schemas import AgentPassport
+
     payload = {
         "passport_type": "agent",
         "name": args.name or "demo-agent",

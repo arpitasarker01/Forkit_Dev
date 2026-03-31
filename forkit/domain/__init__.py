@@ -9,16 +9,17 @@ Pure Python domain logic with zero external dependencies.
   integrity  — verify_passport_id, compute_metadata_hash
 """
 
-from .hashing import HashEngine, engine as hash_engine
-from .identity import compute_id, validate_hash, validate_version, to_json_safe
+from .hashing import HashEngine
+from .hashing import engine as hash_engine
+from .identity import compute_id, to_json_safe, validate_hash, validate_version
+from .integrity import compute_metadata_hash, verify_passport_id
 from .lineage import (
+    EdgeType,
+    LineageEdge,
     LineageGraph,
     LineageNode,
-    LineageEdge,
     NodeType,
-    EdgeType,
 )
-from .integrity import verify_passport_id, compute_metadata_hash
 
 __all__ = [
     "HashEngine",

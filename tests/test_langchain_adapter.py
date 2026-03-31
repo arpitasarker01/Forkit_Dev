@@ -4,14 +4,13 @@ from typing import Any
 
 import pytest
 
-from forkit.sdk import ForkitClient
 from forkit.schemas import TaskType
+from forkit.sdk import ForkitClient
 from forkit_langchain import (
     BoundLangChainRunnable,
     ForkitLangChainCallbackHandler,
     LangChainAdapter,
 )
-
 
 CREATOR = {"name": "Hamza", "organization": "ForkIt"}
 
@@ -152,14 +151,13 @@ class TestLangChainAdapter:
         assert "FakeListChatModel" in summary["models"]
 
     def test_tool_calling_agent_captures_tool_metadata_and_runtime(self, tmp_path):
-        agents_module = pytest.importorskip("langchain.agents")
+        pytest.importorskip("langchain.agents")
         chat_models = pytest.importorskip("langchain_core.language_models.chat_models")
         messages_module = pytest.importorskip("langchain_core.messages")
         tool_messages = pytest.importorskip("langchain_core.messages.tool")
         outputs_module = pytest.importorskip("langchain_core.outputs")
         tools_module = pytest.importorskip("langchain_core.tools")
 
-        create_agent = agents_module.create_agent
         BaseChatModel = chat_models.BaseChatModel
         AIMessage = messages_module.AIMessage
         ToolMessage = messages_module.ToolMessage

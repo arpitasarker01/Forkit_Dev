@@ -19,12 +19,10 @@ license         Distribution license (inherited from BasePassport).
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any
 
 from pydantic import BaseModel, Field
 
-from .base import BasePassport, LicenseType  # LicenseType re-exported for convenience
-
+from .base import BasePassport  # LicenseType re-exported for convenience
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Enumerations

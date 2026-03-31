@@ -11,7 +11,6 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
-
 DDL = """
 CREATE TABLE IF NOT EXISTS passports (
     id          TEXT PRIMARY KEY,
@@ -51,7 +50,7 @@ class RegistryDB:
             self._conn.close()
             self._conn = None
 
-    def __enter__(self) -> "RegistryDB":
+    def __enter__(self) -> RegistryDB:
         self.connect()
         return self
 
