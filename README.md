@@ -6,6 +6,8 @@ AI models and agents often move across repos, tools, teams, and runtimes without
 
 Create a passport locally. Verify it in GitHub CI. Share or govern it through Forkit Dev when you need hosted visibility.
 
+Questions, launch feedback, or contributor interest: open a GitHub issue or join the Discord / Slack links in the [Community](#community) section.
+
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-2f2a62.svg)](#install)
 [![Status](https://img.shields.io/badge/status-alpha-f49355.svg)](#current-status)
