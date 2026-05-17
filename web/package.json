@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "description": "Forkit Core frontend prototype built with React, TypeScript, and Vite",
   "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

@@ -62,7 +62,7 @@ export function LandingPage() {
               in a local Forkit registry.
             </h1>
             <p className="max-w-3xl text-[1.08rem] leading-relaxed text-muted md:text-xl">
-              Explore the current Forkit Core release in the browser. The web UI is mock-backed for demonstration, while the real open source value already ships in the schemas, local registry, SDK, CLI, and examples.
+              Explore the current Forkit Core release in the browser. This UI is mock-backed for demonstration and local product exploration, while the durable OSS value ships in the schemas, local registry, SDK, CLI, and examples.
             </p>
           </div>
 

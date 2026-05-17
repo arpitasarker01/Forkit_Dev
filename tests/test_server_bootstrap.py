@@ -31,11 +31,13 @@ class TestServerBootstrap:
         ready_json = ready.json()
 
         assert root_json["service"] == "forkit-local-service"
-        assert root_json["registry"]["root"] == str(settings.registry_root)
-        assert root_json["registry"]["outbox_path"] == str(settings.registry_root / "outbox.jsonl")
-        assert root_json["registry"]["sync_state_path"] == str(settings.registry_root / "sync_state.json")
-        assert root_json["registry"]["sync_batches_path"] == str(settings.registry_root / "sync_inbox.jsonl")
-        assert root_json["registry"]["sync_inbox_dir"] == str(settings.registry_root / "sync_inbox")
+        assert root_json["registry"]["initialized"] is True
+        assert root_json["registry"]["storage_backend"] == "local-filesystem"
+        assert "root" not in root_json["registry"]
+        assert "outbox_path" not in root_json["registry"]
+        assert "sync_state_path" not in root_json["registry"]
+        assert "sync_batches_path" not in root_json["registry"]
+        assert "sync_inbox_dir" not in root_json["registry"]
         assert root_json["sync"]["backend"] == "local"
         assert root_json["sync"]["auth_enabled"] is False
         assert root_json["sync"]["postgres_schema"] is None

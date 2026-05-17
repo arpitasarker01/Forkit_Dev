@@ -1,6 +1,6 @@
 # Forkit Dev Core
 
-**Open-source passport infrastructure for AI models and agents.**
+**Open-source AI passports with deterministic IDs and lineage.**
 
 AI models and agents often move across repos, tools, teams, and runtimes without stable identity, lineage, or verification. Forkit Dev gives them portable passports: deterministic IDs, provenance links, artifact hashes, lineage records, and CI-friendly validation.
 
@@ -13,11 +13,35 @@ Create a passport locally. Verify it in GitHub CI. Share or govern it through Fo
 
 ![Forkit Dev passport flow](./docs/assets/forkit-passport-flow.png)
 
-## Try it in 60 seconds
+## 60-Second Demo
 
 ```bash
 git clone https://github.com/Forkit-Dev-Core/Forkit_Dev.git
 cd Forkit_Dev
+pip install -e .
+
+python examples/deterministic_identity_demo.py
+```
+
+That demo shows the core property:
+
+- same stable passport inputs => same deterministic `passport_id`
+- changed artifact or creator => different `passport_id`
+
+Example output:
+
+```text
+Forkit deterministic passport demo
+
+same input               ddfd461f5fc78574c3244da346f64bf3b1d95e83e0dfe174209937f9d561bd0b
+same input again         ddfd461f5fc78574c3244da346f64bf3b1d95e83e0dfe174209937f9d561bd0b
+changed artifact         e271004e8f9e83d9e81f8f5d3d35736c4e4bf841d46d821d74b59e439d6f3cea
+changed creator          f78fb6bf1d7feee0fb2020753904b50a550f194a5f5664dff91b70601e31f0ac
+```
+
+If you want the CLI flow instead:
+
+```bash
 pip install -e ".[cli]"
 
 python scripts/generate_passport_template.py --passport-type model --output forkit-passport.json
@@ -26,7 +50,7 @@ python scripts/validate_passport.py --path forkit-passport.json
 
 That flow creates a starter `ModelPassport`, writes a deterministic `id` into `forkit-passport.json`, and verifies that the stored `id` still matches the schema-derived identity. No hosted service is required.
 
-## Why Forkit Dev Core
+## Why This Exists
 
 Forkit Dev Core makes the passport itself the durable boundary for AI identity.
 Instead of depending on one registry, one dashboard, or one runtime, you keep a
@@ -42,6 +66,44 @@ This repository is for teams that want:
 - local-first workflows that do not require a hosted control plane
 - a verification path that fits normal repository and CI practices
 
+## What This Is And Isn't
+
+What it is:
+
+- a deterministic identity contract for AI models and agents
+- a portable passport document with provenance, artifact hashes, and lineage
+- a local-first SDK, CLI, registry, and CI validation path
+
+What it is not:
+
+- a claim that the model is safe, legal, or approved
+- a hosted team governance product by itself
+- a replacement for model cards, SBOMs, or attestations
+
+Forkit Core is meant to complement those artifacts by giving the model or agent
+itself a stable portable identity that other review and governance layers can
+join on.
+
+## Common Questions
+
+**Why not just use model cards?**
+
+Model cards are useful documentation, but they are not deterministic identity.
+Forkit Core gives the passport a rebuildable `passport_id` that can be
+re-derived and verified locally.
+
+**Why not just use attestations or SBOMs?**
+
+Attestations and SBOMs are important evidence formats. Forkit Core is the
+identity layer they can attach to. It focuses on stable identity, lineage, and
+portable provenance rather than replacing supply-chain evidence standards.
+
+**Does Forkit Core verify that a claim is true?**
+
+No. It verifies that a passport's deterministic identity still matches its
+declared contents. Truth, ownership, and publication claims still require
+source proof, review, or hosted governance workflows.
+
 ## What You Can Do Today
 
 - Create `ModelPassport` and `AgentPassport` records with deterministic IDs.
@@ -56,10 +118,19 @@ This repository is for teams that want:
 ## Current Status
 
 - Alpha open-source core. `pyproject.toml` declares `Development Status :: 3 - Alpha`.
+- The identity contract and deterministic verification behavior are already stable enough to use and evaluate.
 - Real Python package, CLI, examples, scripts, and local HTTP service live in this repo today.
 - Optional extras add LangChain, LangGraph, FastAPI/Uvicorn server, and Postgres-backed sync receiver support.
 - The frontend is a prototype for exploration and demonstration, not a production-backed control plane.
 - PyPI publication is not live yet. Install from this GitHub checkout.
+
+## Public Install Path
+
+PyPI is not live yet, but the package is publicly installable directly from GitHub:
+
+```bash
+pip install "forkit-core @ git+https://github.com/Forkit-Dev-Core/Forkit_Dev.git"
+```
 
 ## What To Try Next
 
@@ -87,9 +158,23 @@ prefer browser-based passport creation, dashboards, private workspaces,
 telemetry, collaboration, approvals, and governance workflows. Those hosted
 workflows are not implemented in this repository today.
 
+## Identity Boundary
+
+`Forkit Dev Core` uses the deterministic `passport_id` as the canonical
+portable identity for a passport.
+
+If a passport is later published or connected to a hosted Forkit deployment,
+the hosted system must preserve that `passport_id` and attach any hosted or
+public identity as additional application metadata. Hosted layers may join on
+`passport_id`, but they must not rewrite it.
+
+This repository does not implement a hosted account, claim, or publish flow
+today. It implements the local identity contract that those future workflows
+must respect.
+
 ## Install
 
-Python 3.10+ is required. Node.js is only needed if you want to run the
+Python 3.10+ is required. Node.js 20+ is only needed if you want to run the
 frontend prototype.
 
 Install from this repository:
@@ -251,12 +336,21 @@ forkit list --type model --status active
 forkit search "llama"
 forkit lineage <passport-id>
 forkit verify <passport-id>
+forkit hosted-proof <passport-id>
 forkit stats
 
 forkit sync status
 forkit sync push https://example.com/sync/passports --target main-server
 forkit sync pull https://example.com/export --source remote-dev
 ```
+
+The CLI is local-first. `forkit sync push` and `forkit sync pull` are generic
+sync primitives for self-hosted or custom HTTP endpoints that preserve
+`passport_id`. They are not a hosted Forkit publish or claim flow.
+
+When you want to bind an OSS passport into hosted Forkit later, `forkit hosted-proof <passport-id>`
+prints the exact `/.well-known/forkit-verify.txt` proof line and target URL for
+supported GitHub, Hugging Face, and GitLab sources.
 
 ## Local Service and Sync
 
@@ -270,12 +364,18 @@ forkit serve --host 127.0.0.1 --port 8000
 
 Relevant routes:
 
-- `GET /` for service info and registry paths
+- `GET /` for service info
 - `GET /healthz` and `GET /readyz` for liveness/readiness checks
 - `POST /models` and `POST /agents` for passport registration
 - `GET /passports/{id}` and `POST /verify/{id}` for fetch and verification
 - `GET /lineage/{id}` for ancestry and descendants
 - `GET /export` and `POST /sync/passports` for generic sync
+
+Security posture for the local service:
+
+- keep `forkit serve` on `127.0.0.1` unless you intentionally place it behind a trusted network boundary
+- set `FORKIT_SYNC_BEARER_TOKEN` before exposing `POST /sync/passports` beyond localhost
+- treat the local service as a developer or self-host primitive, not a public hosted control plane
 
 The repository also includes a runnable self-host demo:
 
@@ -404,9 +504,8 @@ Use Discord or Slack for earlier discussion and onboarding questions.
 
 ## Contributing
 
-Contributions are welcome. If you plan a large change to identity derivation,
-schema semantics, sync contracts, or adapter behavior, open an issue first so
-the contract can be discussed before implementation.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution workflow,
+expectations, and release-sensitive areas.
 
 Before opening a pull request:
 

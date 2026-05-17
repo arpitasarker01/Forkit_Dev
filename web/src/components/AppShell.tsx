@@ -76,7 +76,7 @@ export function AppShell() {
 
       <div className="relative z-40 border-b border-border/70 bg-surface-soft/75 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 text-xs text-muted sm:px-6 lg:px-8">
-          Web UI note: included for exploration in this open source release. It uses mock in-memory data, while the persistent core already lives in the schemas, local registry, SDK, CLI, and examples.
+          Web UI note: this prototype is mock-backed and included for local exploration only. It is not a hosted Forkit client or a production-backed control plane.
         </div>
       </div>
 

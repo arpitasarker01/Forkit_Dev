@@ -19,19 +19,14 @@ def service_info(
     settings: ServerSettings = _SETTINGS_DEP,
     registry: LocalRegistry = _REGISTRY_DEP,
 ) -> dict[str, object]:
-    """Basic service metadata and registry location."""
+    """Basic service metadata without exposing local filesystem paths."""
     return {
         "service": "forkit-local-service",
         "version": __version__,
         "status": "ok",
         "registry": {
-            "root": str(settings.registry_root),
-            "index_db": str(registry.db_path),
-            "lineage_path": str(registry.lineage_path),
-            "outbox_path": str(registry.outbox_path),
-            "sync_state_path": str(registry.sync_state_path),
-            "sync_batches_path": str(registry.sync_batches_path),
-            "sync_inbox_dir": str(registry.sync_inbox_dir),
+            "initialized": registry.models_dir.exists() and registry.agents_dir.exists(),
+            "storage_backend": "local-filesystem",
         },
         "docs": {
             "openapi": settings.openapi_url,
@@ -54,7 +49,6 @@ def health(
     """Liveness check for the local service process."""
     return {
         "status": "ok",
-        "registry_root": str(settings.registry_root),
         "initialized": registry.models_dir.exists() and registry.agents_dir.exists(),
     }
 
@@ -67,7 +61,6 @@ def ready(
     """Readiness check for the local registry bootstrap."""
     return {
         "status": "ready",
-        "registry_root": str(settings.registry_root),
         "index_db_exists": registry.db_path.exists(),
         "models_dir_exists": registry.models_dir.exists(),
         "agents_dir_exists": registry.agents_dir.exists(),

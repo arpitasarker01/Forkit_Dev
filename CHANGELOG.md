@@ -65,5 +65,5 @@ Initial public release.
 
 ---
 
-[Unreleased]: https://github.com/arpitasarker01/Forkit_Dev/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/arpitasarker01/Forkit_Dev/releases/tag/v0.1.0
+[Unreleased]: https://github.com/Forkit-Dev-Core/Forkit_Dev/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/Forkit-Dev-Core/Forkit_Dev/releases/tag/v0.1.0

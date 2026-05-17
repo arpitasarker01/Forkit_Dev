@@ -7,6 +7,7 @@ Commands
 ────────
   forkit register model <yaml-file>
   forkit register agent <yaml-file>
+  forkit hosted-proof <id>
   forkit sync push <endpoint>
   forkit sync pull <endpoint>
   forkit serve
@@ -18,6 +19,9 @@ Commands
   forkit stats
 
 Requires: typer (pip install typer)
+
+The sync commands are generic self-host or custom-endpoint primitives. They do
+not implement a hosted Forkit publish or claim workflow.
 """
 
 from __future__ import annotations
@@ -25,6 +29,7 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
 
 try:
     import typer
@@ -54,6 +59,7 @@ _INSPECT_ID_ARGUMENT = typer.Argument(..., help="Full or partial passport ID")
 _SEARCH_QUERY_ARGUMENT = typer.Argument(..., help="Search term (name / creator)")
 _LINEAGE_ID_ARGUMENT = typer.Argument(..., help="Passport ID")
 _VERIFY_ID_ARGUMENT = typer.Argument(..., help="Passport ID to verify")
+_HOSTED_PROOF_ID_ARGUMENT = typer.Argument(..., help="Passport ID to prepare for hosted Forkit import")
 _SYNC_PUSH_ENDPOINT_ARGUMENT = typer.Argument(..., help="Remote POST endpoint for sync batches")
 _SYNC_PULL_ENDPOINT_ARGUMENT = typer.Argument(
     ...,
@@ -99,6 +105,39 @@ _SERVE_REGISTRY_ROOT_OPTION = typer.Option(
 
 def _registry() -> LocalRegistry:
     return LocalRegistry(root=_REGISTRY_ROOT)
+
+
+def _normalize_host(value: str | None) -> str:
+    return str(value or "").strip().lower().removeprefix("www.")
+
+
+def _build_hosted_proof_url(source_url: str | None) -> str | None:
+    if not source_url:
+        return None
+
+    try:
+        parsed = urlparse(source_url)
+    except Exception:
+        return None
+
+    host = _normalize_host(parsed.hostname)
+    path_parts = [part for part in parsed.path.removesuffix(".git").split("/") if part]
+    if len(path_parts) < 2:
+        return None
+
+    if host == "github.com":
+        owner, repo = path_parts[0], path_parts[1]
+        return f"https://raw.githubusercontent.com/{owner}/{repo}/HEAD/.well-known/forkit-verify.txt"
+
+    if host == "huggingface.co":
+        owner, repo = path_parts[0], path_parts[1]
+        return f"https://huggingface.co/{owner}/{repo}/resolve/main/.well-known/forkit-verify.txt"
+
+    if host == "gitlab.com":
+        owner, repo = path_parts[0], path_parts[1]
+        return f"https://gitlab.com/{owner}/{repo}/-/raw/main/.well-known/forkit-verify.txt"
+
+    return None
 
 
 # ── register ──────────────────────────────────────────────────────────────────
@@ -188,6 +227,62 @@ def verify(passport_id: str = _VERIFY_ID_ARGUMENT):
     typer.echo(json.dumps(result, indent=2))
     if not result.get("valid"):
         raise typer.Exit(1)
+
+
+@app.command("hosted-proof")
+def hosted_proof(passport_id: str = _HOSTED_PROOF_ID_ARGUMENT):
+    """Print the proof file details required before importing this passport into hosted Forkit."""
+    reg = _registry()
+    passport = reg.get(passport_id)
+    if passport is None:
+        typer.echo(f"Not found: {passport_id}", err=True)
+        raise typer.Exit(1)
+
+    payload = passport.to_dict()
+    canonical_passport_id = str(payload.get("id") or "").strip().lower()
+    source_url = str(payload.get("source_url") or payload.get("sourceUrl") or "").strip() or None
+    verify_url = _build_hosted_proof_url(source_url)
+
+    if not source_url:
+        typer.echo(
+            json.dumps(
+                {
+                    "passport_id": canonical_passport_id,
+                    "ready": False,
+                    "reason": "This passport does not declare a source URL. Hosted import proof requires a GitHub, Hugging Face, or GitLab source URL.",
+                },
+                indent=2,
+            )
+        )
+        raise typer.Exit(1)
+
+    if not verify_url:
+        typer.echo(
+            json.dumps(
+                {
+                    "passport_id": canonical_passport_id,
+                    "source_url": source_url,
+                    "ready": False,
+                    "reason": "Hosted import proof currently supports GitHub, Hugging Face, and GitLab source URLs only.",
+                },
+                indent=2,
+            )
+        )
+        raise typer.Exit(1)
+
+    typer.echo(
+        json.dumps(
+            {
+                "passport_id": canonical_passport_id,
+                "source_url": source_url,
+                "verify_url": verify_url,
+                "file_path": "/.well-known/forkit-verify.txt",
+                "proof_line": f"forkit-passport-id={canonical_passport_id}",
+                "ready": True,
+            },
+            indent=2,
+        )
+    )
 
 
 # ── stats ─────────────────────────────────────────────────────────────────────
@@ -291,9 +386,24 @@ def serve(
         host=host,
         port=port,
     )
+    warning_lines: list[str] = []
+    if settings.host not in {"127.0.0.1", "localhost"}:
+        warning_lines.append(
+            "Warning: non-loopback host configured. Keep this service behind a trusted network boundary."
+        )
+    if settings.sync_bearer_token is None:
+        warning_lines.append(
+            "Warning: FORKIT_SYNC_BEARER_TOKEN is not set. If you expose /sync/passports outside localhost, add a bearer token first."
+        )
+
     typer.echo(
-        f"Serving forkit local service on http://{settings.host}:{settings.port}\n"
-        f"Registry root: {settings.registry_root}"
+        "\n".join(
+            [
+                f"Serving forkit local service on http://{settings.host}:{settings.port}",
+                "Service metadata avoids exposing local filesystem paths by default.",
+                *warning_lines,
+            ]
+        )
     )
     uvicorn.run(
         create_app(settings=settings),

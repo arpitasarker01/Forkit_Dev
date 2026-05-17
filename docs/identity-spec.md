@@ -257,3 +257,14 @@ Full IDs are printed by running `python3 examples/use_cases.py`.
 
 Any change that breaks the ID derivation or serialisation roundtrip will
 increment the **major** version and will be accompanied by a migration script.
+
+---
+
+## Hosted identity mapping note
+
+`passport_id` remains the canonical portable identity for this open-source
+contract.
+
+If a future hosted Forkit deployment attaches a public alias, account owner, or
+workspace metadata, those values must join on `passport_id` and must not change
+the deterministic ID derivation defined here.
