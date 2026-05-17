@@ -4,13 +4,14 @@
 name: demo-instruct-model
 version: 1.0.0
 description: Demo instruction-tuned model for public Forkit Core examples
+task_type: text-generation
 architecture: transformer
 parameter_count: 8000000000
 quantization: fp16
 license: Apache-2.0
 fine_tuning_method: LoRA
 
-base_model_id: ""  # fill with parent model passport ID if known
+base_model_id: null  # fill with parent model passport ID if known
 
 creator:
   name: Forkit Team
@@ -30,7 +31,7 @@ capabilities:
 
 training_data:
   - name: public-demo-corpus-v1
-    hash: ""  # fill with SHA-256 of dataset
+    hash: null  # fill with SHA-256 of dataset if you want the dataset fingerprint recorded
     size_tokens: 12000000
     cutoff_date: "2024-06-01"
 

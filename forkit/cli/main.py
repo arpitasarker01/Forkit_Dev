@@ -46,7 +46,7 @@ from ..registry.local import LocalRegistry
 from ..schemas import AgentPassport, ModelPassport
 from ..sync import RemoteSyncBridge
 
-app     = typer.Typer(name="forkit", help="forkit-core — AI model/agent identity CLI")
+app     = typer.Typer(name="forkit", help="forkit-core — AI model and agent passport CLI")
 reg_app = typer.Typer(help="Register a passport from a YAML file")
 sync_app = typer.Typer(help="Push and pull generic sync batches")
 app.add_typer(reg_app, name="register")

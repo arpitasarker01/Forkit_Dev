@@ -1,10 +1,10 @@
-# Forkit Dev Core
+# forkit-core
 
 **Open-source AI passports with deterministic IDs and lineage.**
 
-AI models and agents often move across repos, tools, teams, and runtimes without stable identity, lineage, or verification. Forkit Dev gives them portable passports: deterministic IDs, provenance links, artifact hashes, lineage records, and CI-friendly validation.
+AI models and agents often move across repos, tools, teams, and runtimes without stable identity, lineage, or verification. `forkit-core` gives them portable passports: deterministic IDs, provenance links, artifact hashes, lineage records, and CI-friendly validation.
 
-Create a passport locally. Verify it in GitHub CI. Share or govern it through Forkit Dev when you need hosted visibility.
+Create a passport locally. Verify it in GitHub CI. Keep the identity portable. Connect it to Forkit.dev later when you need hosted visibility or governance workflows.
 
 Questions, launch feedback, or contributor interest: open a GitHub issue or join the Discord / Slack links in the [Community](#community) section.
 
@@ -13,9 +13,9 @@ Questions, launch feedback, or contributor interest: open a GitHub issue or join
 [![Status](https://img.shields.io/badge/status-alpha-f49355.svg)](#current-status)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-008190.svg)](#contributing)
 
-![Forkit Dev passport flow](./docs/assets/forkit-passport-flow.png)
+![forkit-core passport flow](./docs/assets/forkit-passport-flow.png)
 
-## 60-Second Demo
+## Quick Start
 
 ```bash
 git clone https://github.com/Forkit-Dev-Core/Forkit_Dev.git
@@ -54,7 +54,7 @@ That flow creates a starter `ModelPassport`, writes a deterministic `id` into `f
 
 ## Why This Exists
 
-Forkit Dev Core makes the passport itself the durable boundary for AI identity.
+`forkit-core` makes the passport itself the durable boundary for AI identity.
 Instead of depending on one registry, one dashboard, or one runtime, you keep a
 portable document that can be created locally, reviewed in Git, validated in
 CI, synced across environments, and re-verified later without changing its
@@ -82,7 +82,7 @@ What it is not:
 - a hosted team governance product by itself
 - a replacement for model cards, SBOMs, or attestations
 
-Forkit Core is meant to complement those artifacts by giving the model or agent
+`forkit-core` is meant to complement those artifacts by giving the model or agent
 itself a stable portable identity that other review and governance layers can
 join on.
 
@@ -91,78 +91,73 @@ join on.
 **Why not just use model cards?**
 
 Model cards are useful documentation, but they are not deterministic identity.
-Forkit Core gives the passport a rebuildable `passport_id` that can be
+`forkit-core` gives the passport a rebuildable `passport_id` that can be
 re-derived and verified locally.
 
 **Why not just use attestations or SBOMs?**
 
-Attestations and SBOMs are important evidence formats. Forkit Core is the
+Attestations and SBOMs are important evidence formats. `forkit-core` is the
 identity layer they can attach to. It focuses on stable identity, lineage, and
 portable provenance rather than replacing supply-chain evidence standards.
 
-**Does Forkit Core verify that a claim is true?**
+**Does `forkit-core` verify that a claim is true?**
 
 No. It verifies that a passport's deterministic identity still matches its
 declared contents. Truth, ownership, and publication claims still require
 source proof, review, or hosted governance workflows.
 
-## What You Can Do Today
+## Current Scope
 
-- Create `ModelPassport` and `AgentPassport` records with deterministic IDs.
-- Attach `artifact_hash`, `parent_hash`, `base_model_id`, `model_id`, and `parent_agent_id`.
-- Store passports locally in JSON with a rebuildable SQLite index.
-- Register, inspect, verify, search, list, and sync passports through the Python SDK and CLI.
-- Validate committed passport files in GitHub Actions.
-- Export a `ModelPassport` JSON file into a Hugging Face-style model card markdown file.
-- Try adapter-assisted registration flows for LangGraph, LangChain, and OpenClaw.
-- Explore a React + TypeScript frontend prototype under [`web/`](./web) that is currently mock-backed.
+- Deterministic `ModelPassport` and `AgentPassport` records
+- Local JSON passports with a rebuildable SQLite index
+- Python SDK, CLI, validation scripts, and local HTTP service
+- GitHub CI validation for committed passport files
+- Framework adapters for LangGraph, LangChain, and OpenClaw
+- File-based Hugging Face model card export
+- A prototype browser UI under [`web/`](./web), clearly separate from any hosted control plane
 
-## Current Status
+Current maturity:
 
-- Alpha open-source core. `pyproject.toml` declares `Development Status :: 3 - Alpha`.
-- The identity contract and deterministic verification behavior are already stable enough to use and evaluate.
-- Real Python package, CLI, examples, scripts, and local HTTP service live in this repo today.
-- Optional extras add LangChain, LangGraph, FastAPI/Uvicorn server, and Postgres-backed sync receiver support.
-- The frontend is a prototype for exploration and demonstration, not a production-backed control plane.
-- PyPI publication is not live yet. Install from this GitHub checkout.
+- Alpha open-source core, but the identity contract and deterministic verification behavior are already stable enough to evaluate seriously
+- PyPI is not live yet
+- advanced flows such as hosted import preparation, self-host sync, adapters, and the prototype UI exist, but they are not the primary first-use path
 
-## Public Install Path
-
-PyPI is not live yet, but the package is publicly installable directly from GitHub:
+Public install path:
 
 ```bash
 pip install "forkit-core @ git+https://github.com/Forkit-Dev-Core/Forkit_Dev.git"
 ```
 
-## What To Try Next
+## Primary and Advanced Paths
 
-| Goal | Entry point |
+| Goal | Maturity | Entry point |
 |---|---|
-| Smallest end-to-end local registration flow | `python examples/sdk_quickstart.py` |
-| Register from YAML through the CLI | `forkit register model examples/register_model.yaml` |
-| Validate a committed passport in CI | [`publish/github-ci-demo/`](./publish/github-ci-demo/) |
-| Run the local HTTP service | `pip install -e ".[server]" && forkit serve --host 127.0.0.1 --port 8000` |
-| Try self-host sync between two local registries | `python examples/self_host_sync_quickstart.py` |
-| Try the LangGraph adapter | `python examples/langgraph_sync_quickstart.py` |
-| Try the LangChain adapter | `python examples/langchain_sync_quickstart.py` |
-| Try the OpenClaw adapter | `python examples/openclaw_quickstart.py` |
-| Explore the browser UI prototype | `cd web && npm install && npm run dev` |
+| Deterministic identity demo | Primary | `python examples/deterministic_identity_demo.py` |
+| Smallest end-to-end local registration flow | Primary | `python examples/sdk_quickstart.py` |
+| Register from YAML through the CLI | Primary | `forkit register model examples/register_model.yaml` |
+| Validate a committed passport in CI | Primary | [`publish/github-ci-demo/`](./publish/github-ci-demo/) |
+| Run the local HTTP service | Primary | `pip install -e ".[server]" && forkit serve --host 127.0.0.1 --port 8000` |
+| Try self-host sync between two local registries | Advanced | `python examples/self_host_sync_quickstart.py` |
+| Try the LangGraph adapter | Advanced | `python examples/langgraph_sync_quickstart.py` |
+| Try the LangChain adapter | Advanced | `python examples/langchain_sync_quickstart.py` |
+| Try the OpenClaw adapter | Advanced | `python examples/openclaw_quickstart.py` |
+| Explore the browser UI prototype | Early | `cd web && npm install && npm run dev` |
 
-## Open Source Core Vs Hosted Direction
+## `forkit-core` and Forkit.dev
 
-`Forkit Dev Core` is the local-first open-source foundation in this repository:
+`forkit-core` is the local-first open-source foundation in this repository:
 schemas, deterministic IDs, artifact hashing, lineage, local registry, SDK,
 CLI, sync primitives, optional local service, adapters, and the prototype web
 UI.
 
-`Forkit Dev` is the broader hosted direction around that core for teams that
+`Forkit.dev` is the broader hosted direction around that core for teams that
 prefer browser-based passport creation, dashboards, private workspaces,
 telemetry, collaboration, approvals, and governance workflows. Those hosted
 workflows are not implemented in this repository today.
 
 ## Identity Boundary
 
-`Forkit Dev Core` uses the deterministic `passport_id` as the canonical
+`forkit-core` uses the deterministic `passport_id` as the canonical
 portable identity for a passport.
 
 If a passport is later published or connected to a hosted Forkit deployment,
@@ -176,7 +171,7 @@ must respect.
 
 ## Install
 
-Python 3.10+ is required. Node.js 20+ is only needed if you want to run the
+Python 3.10+ is required. Node.js 20.19+ is only needed if you want to run the
 frontend prototype.
 
 Install from this repository:
@@ -233,7 +228,7 @@ serialization guarantees, see [`docs/identity-spec.md`](./docs/identity-spec.md)
 
 ## GitHub CI Validation
 
-Forkit Dev Core includes a lightweight GitHub-native validation path for a
+`forkit-core` includes a lightweight GitHub-native validation path for a
 committed passport file. It checks that the file exists, validates the JSON
 against the current `ModelPassport` or `AgentPassport` schema, and verifies
 that the stored deterministic `id` matches the file content.
@@ -327,6 +322,9 @@ pip install -e ".[cli]"
 If `forkit` is not on your `PATH`, use `python -m forkit.cli.main ...` with
 the same arguments.
 
+Repository and package branding uses `forkit-core`. The local CLI binary stays
+`forkit` intentionally so the user-facing command remains short and stable.
+
 Common commands:
 
 ```bash
@@ -350,7 +348,12 @@ The CLI is local-first. `forkit sync push` and `forkit sync pull` are generic
 sync primitives for self-hosted or custom HTTP endpoints that preserve
 `passport_id`. They are not a hosted Forkit publish or claim flow.
 
-When you want to bind an OSS passport into hosted Forkit later, `forkit hosted-proof <passport-id>`
+`examples/register_model.yaml` is runnable as checked in. `examples/register_agent.yaml`
+is a second-step sample and expects an already registered model passport ID in `model_id`.
+
+When you want to bind an OSS passport into hosted Forkit later, first register
+or create the passport locally, then run `forkit hosted-proof <passport-id>`.
+That command looks up the passport in your local registry and
 prints the exact `/.well-known/forkit-verify.txt` proof line and target URL for
 supported GitHub, Hugging Face, and GitLab sources.
 
@@ -397,7 +400,7 @@ If you need the Postgres-backed receiver, install `.[postgres]` and set:
 
 ## Framework Adapters
 
-Forkit Dev Core ships thin adapters that preserve the same passport contract
+`forkit-core` ships thin adapters that preserve the same passport contract
 while helping you register framework-specific runtime surfaces.
 
 ### LangGraph
@@ -481,7 +484,7 @@ Demo screenshots:
 
 | Home | Registry | Inspect |
 |---|---|---|
-| ![Forkit Core Home demo](docs/images/home.png) | ![Forkit Core Registry demo](docs/images/registry.png) | ![Forkit Core Inspect demo](docs/images/inspect.png) |
+| ![forkit-core home demo](docs/images/home.png) | ![forkit-core registry demo](docs/images/registry.png) | ![forkit-core inspect demo](docs/images/inspect.png) |
 
 ## Design Principles
 
@@ -496,13 +499,14 @@ run [`examples/use_cases.py`](./examples/use_cases.py).
 
 ## Community
 
+- GitHub issues and pull requests: use the repository for bugs, proposals, and contribution review
 - Website: [forkit.dev](https://forkit.dev)
 - Open-source repository: [github.com/Forkit-Dev-Core/Forkit_Dev](https://github.com/Forkit-Dev-Core/Forkit_Dev)
 - Discord: [discord.gg/yJ4cdpt7c](https://discord.gg/yJ4cdpt7c)
 - Slack: [Forkit Dev workspace](https://join.slack.com/t/forkitdevworkspace/shared_invite/zt-3tgrdgk5v-83aev6ZwE7qQHe_M4q9HIw)
 
-Use GitHub issues and pull requests for concrete bugs, fixes, and proposals.
-Use Discord or Slack for earlier discussion and onboarding questions.
+Use GitHub first when the discussion should produce a tracked change.
+Use Discord or Slack for earlier discussion, onboarding questions, and community contact.
 
 ## Contributing
 
